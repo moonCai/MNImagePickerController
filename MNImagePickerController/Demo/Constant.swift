@@ -6,4 +6,7 @@
 //  Copyright © 2018年 T. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+let portraitThumb = "http://qiniu.iwhere.com/zntn/2a18577a499c78f09927384c494082da.jpg"
+let portraitLarge = "http://qiniu.iwhere.com/zntn/2a18577a499c78f09927384c494082da.jpg"

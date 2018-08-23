@@ -9,16 +9,43 @@
 import UIKit
 
 class NewsTableViewCell: UITableViewCell {
+    
+    private lazy var dateLabel: UILabel = {
+        let label = UILabel()
+        label.text = "今天"
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        return label
+    }()
+    lazy var cameraButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "cameraIcon"), for: .normal)
+        button.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
+        return button
+    }()
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        configureUI()
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configureUI() {
+        contentView.addSubview(dateLabel)
+        contentView.addSubview(cameraButton)
+        
+        dateLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(10)
+            $0.top.equalToSuperview().offset(20)
+        }
+        
+        cameraButton.snp.makeConstraints {
+            $0.top.equalTo(dateLabel)
+            $0.leading.equalTo(dateLabel.snp.trailing).offset(20)
+            $0.size.equalTo(CGSize(width: 80, height: 80))
+        }
     }
 
 }
