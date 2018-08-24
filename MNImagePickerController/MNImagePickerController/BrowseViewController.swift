@@ -10,8 +10,10 @@ import UIKit
 
 class BrowseViewController: UIViewController {
     
-    var startRect: CGRect?
+    // 是否是放大状态
     var isZoom: Bool = false
+
+    var dismissClosure: (()->())?
     
      lazy var browseScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -20,44 +22,45 @@ class BrowseViewController: UIViewController {
     }()
      lazy var browseImageView: UIImageView = {
         let imageview = UIImageView()
-        imageview.backgroundColor = .yellow
+        imageview.image = UIImage(named: "rect_portrait")!
         imageview.contentMode = .scaleAspectFill
         imageview.clipsToBounds = true
         return imageview
     }()
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.modalTransitionStyle = .crossDissolve
-        self.modalPresentationStyle = .fullScreen
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+      private lazy var indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
     
     override func viewDidLoad() {
         super.viewDidLoad()
          configureUI()
     }
     
-     func configureUI() {
+     private func configureUI() {
+        let oneTap = UITapGestureRecognizer(target: self, action: #selector(oneTapAtion))
+        view.addGestureRecognizer(oneTap)
+        
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(doubleTapAction(recognizer:)))
         doubleTap.numberOfTapsRequired = 2
         view.addGestureRecognizer(doubleTap)
+        
+        oneTap.require(toFail: doubleTap)
         
         browseScrollView.alpha = 0
         browseImageView.alpha = 0
         
         view.addSubview(browseScrollView)
+        view.addSubview(indicatorView)
+   
         browseScrollView.addSubview(browseImageView)
         browseScrollView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.size.equalTo(CGSize(width: screenWidth, height: screenWidth))
         }
         browseImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.center.equalToSuperview()
             $0.size.equalTo(CGSize(width: screenWidth, height: screenWidth))
+        }
+        indicatorView.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
     
@@ -68,15 +71,10 @@ class BrowseViewController: UIViewController {
     
     func loadLargeImageData(largeImageString: String) {
         guard let imageUrl = URL(string: largeImageString) else { return }
-        let indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
-        view.addSubview(indicatorView)
-        indicatorView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
         indicatorView.startAnimating()
-        URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
+        URLSession.shared.dataTask(with: imageUrl) { [unowned self] (data, response, error) in
             DispatchQueue.main.async {
-                indicatorView.removeFromSuperview()
+                self.indicatorView.removeFromSuperview()
             }
             if error != nil {
                 print(error?.localizedDescription ?? "加载大图失败")
@@ -99,27 +97,27 @@ extension BrowseViewController: UIScrollViewDelegate {
 
 extension BrowseViewController {
     
+     // 单击手势
+    @objc func oneTapAtion() {
+        dismissClosure?()
+    }
+    
     // 双击手势
     @objc func doubleTapAction(recognizer: UITapGestureRecognizer) {
-        let scale = screenWidth / startRect!.width
         isZoom = !isZoom
         switch isZoom {
         case true:
-            UIView.animate(withDuration: 0.25, animations: {
-                var transform2 = CGAffineTransform(scaleX: scale * 2, y: scale * 2)
-                transform2.tx = self.view.center.x - self.startRect!.midX
-                transform2.ty =  self.view.center.y - self.startRect!.midY
-                self.browseScrollView.transform = transform2
+            UIView.animate(withDuration: 0.5, animations: {
+                self.browseScrollView.transform = CGAffineTransform(scaleX: 2, y: 2)
+//                self.browseImageView.transform  = CGAffineTransform(scaleX: 2, y: 2)
             }) { (_) in
                 print("动画结束")
             }
-            browseScrollView.contentSize = CGSize(width: screenWidth * 2, height: screenWidth * 2)
+            self.browseScrollView.contentSize = CGSize(width: screenWidth * 3, height: screenWidth * 4 - screenHeight)
         case false:
-            UIView.animate(withDuration: 0.25, animations: {
-                var transform2 = CGAffineTransform(scaleX: scale, y: scale)
-                transform2.tx = self.view.center.x - self.startRect!.midX
-                transform2.ty =  self.view.center.y - self.startRect!.midY
-                self.browseScrollView.transform = transform2
+            UIView.animate(withDuration: 0.5, animations: {
+                self.browseScrollView.transform = .identity
+                self.browseImageView.transform = .identity
             }) { (_) in
                 print("动画结束")
             }

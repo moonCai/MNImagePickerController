@@ -9,10 +9,6 @@
 import UIKit
 import SnapKit
 
-let NewsTableViewCell_ID = "NewsTableViewCell_ID"
-let screenWidth = UIScreen.main.bounds.size.width
-let screenHeight = UIScreen.main.bounds.size.height
-
 enum MNAnimatorType {
     case modal
     case dismiss
@@ -23,10 +19,12 @@ class ViewController: UIViewController {
     // 转场类型
     private var type: MNAnimatorType = .modal
     // 头像被点击时在屏幕上的位置
-    private var portraitCurrentRect: CGRect = CGRect()
-    private lazy var portraitImage: UIImage = UIImage(named: "rect_portrait")!
+    private var portraitCurrentRect = CGRect()
+    private lazy var portraitImage = UIImage(named: "rect_portrait")!
     
-    private lazy var headerView: NewsTableHeaderView = NewsTableHeaderView()
+    let CellID = "CellID"
+    
+    private lazy var headerView = NewsTableHeaderView()
     
     private lazy var portraitImageView: UIImageView = {
         let imageView = UIImageView()
@@ -40,9 +38,10 @@ class ViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.rowHeight = 120
-        tableView.register(NewsTableViewCell.self, forCellReuseIdentifier: NewsTableViewCell_ID)
+        tableView.register(NewsTableViewCell.self, forCellReuseIdentifier: CellID)
         return tableView
     }()
+    private lazy var indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
     
     override var preferredStatusBarStyle: UIStatusBarStyle { get { return.lightContent }}
     
@@ -72,6 +71,7 @@ extension ViewController {
     
     private func configureUI() {
         view.addSubview(newsTableView)
+        view.addSubview(indicatorView)
         
         headerView.frame.size.height = 3 * screenWidth / 4 + 40
         newsTableView.tableHeaderView = headerView
@@ -82,19 +82,18 @@ extension ViewController {
             $0.top.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(self.bottomLayoutGuide.snp.top)
         }
+        indicatorView.snp.makeConstraints {
+            $0.center.equalTo(headerView.portraitButton)
+        }
+        
+        indicatorView.startAnimating()
     }
     
     private func loadPortraitImageData() {
         guard let url = URL(string: portraitThumb) else { return }
-        let indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
-        view.addSubview(indicatorView)
-        indicatorView.snp.makeConstraints {
-            $0.center.equalTo(headerView.portraitButton)
-        }
-        indicatorView.startAnimating()
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
+        URLSession.shared.dataTask(with: url) { [unowned self] (data, response, error) in
             DispatchQueue.main.async {
-                 indicatorView.removeFromSuperview()
+                self.indicatorView.removeFromSuperview()
             }
             if error != nil {
                 print(error?.localizedDescription ?? "头像下载失败")
@@ -118,7 +117,7 @@ extension ViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NewsTableViewCell_ID, for: indexPath) as! NewsTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellID, for: indexPath) as! NewsTableViewCell
         cell.cameraButton.addTarget(self, action: #selector(cameraButtonAction(sender:)), for: .touchUpInside)
         return cell
     }
@@ -162,44 +161,42 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
     public func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         
         let toView = transitionContext.view(forKey: UITransitionContextViewKey.to)
-
+        
         let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from)
         transitionContext.containerView.addSubview(toView!)
         
-        var imageView: UIImageView = UIImageView()
-    
         switch type {
         case .modal:
-            let tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissTapAction))
-            toView?.addGestureRecognizer(tap)
+            guard let toController = transitionContext.viewController(forKey: .to) as? BrowseViewController else { return }
+            toController.dismissClosure = { [unowned self] in
+                self.dismiss(animated: true, completion: nil)
+            }
             
-            let image = self.headerView.portraitButton.toRetinaImageInRect()
-            imageView = UIImageView(image: image)
-            imageView.frame = self.portraitCurrentRect
-            transitionContext.containerView.addSubview(imageView)
+            let snapshotView = self.headerView.portraitButton.snapshotView(afterScreenUpdates: true)!
+            snapshotView.frame = self.portraitCurrentRect
+            transitionContext.containerView.addSubview(snapshotView)
             
             let zoomScale = screenWidth / portraitCurrentRect.width
-             
+            
             var tran = CATransform3DIdentity
-             let translateX = screenWidth / 2 - self.portraitCurrentRect.midX
-             let translateY = screenHeight / 2 - self.portraitCurrentRect.midY
-             tran = CATransform3DTranslate(tran, translateX, translateY, 50)
+            let translateX = screenWidth / 2 - self.portraitCurrentRect.midX
+            let translateY = screenHeight / 2 - self.portraitCurrentRect.midY
+            tran = CATransform3DTranslate(tran, translateX, translateY, 50)
             tran.m34 = -1 / 1000.0
             tran = CATransform3DScale(tran, zoomScale, zoomScale, 1)
-      
+            
             toView?.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
             toView?.transform = CGAffineTransform(translationX: 0, y: (toView?.bounds.size.height)!)
             UIView.animate(withDuration:transitionDuration(using: nil) * 0.5, animations: {
-                imageView.layer.transform = tran
+                snapshotView.layer.transform = tran
                 fromView?.alpha = 0
                 toView?.transform = .identity
             }, completion: { (_) in
                 fromView?.removeFromSuperview()
-                guard let toController = transitionContext.viewController(forKey: .to) as? BrowseViewController else { return }
                 UIView.animate(withDuration: self.transitionDuration(using: nil) * 0.5, animations: {
                     toController.opaqueSubviews()
                 }, completion: { (_) in
-                    imageView.removeFromSuperview()
+                    snapshotView.removeFromSuperview()
                     transitionContext.completeTransition(true)
                 })
             })
@@ -208,10 +205,10 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             transitionContext.containerView.insertSubview(toView!, belowSubview: fromView!)
             
             guard let fromController = transitionContext.viewController(forKey: .from) as? BrowseViewController else { return }
-            let image = fromController.browseImageView.toRetinaImageInRect()
-            imageView = UIImageView(image: image)
-            imageView.frame = CGRect(x: 0, y: (screenHeight - screenWidth) / 2, width: screenWidth, height: screenWidth)
-            transitionContext.containerView.addSubview(imageView)
+            let snapshotView = fromController.browseImageView.snapshotView(afterScreenUpdates: true)!
+            snapshotView.frame = CGRect(x: 0, y: (screenHeight - screenWidth) / 2, width: screenWidth, height: screenWidth)
+            transitionContext.containerView.addSubview(snapshotView)
+            
             fromView?.removeFromSuperview()
             
             let zoomScale = portraitCurrentRect.width / screenWidth
@@ -225,18 +222,15 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             self.headerView.portraitButton.alpha = 0
             
             UIView.animate(withDuration: self.transitionDuration(using: nil) * 0.5, animations: {
-                imageView.layer.transform = tran
+                snapshotView.layer.transform = tran
                 toView?.alpha = 1
                 self.headerView.portraitButton.alpha = 1
             }, completion: { (_) in
-                imageView.removeFromSuperview()
+                snapshotView.removeFromSuperview()
                 transitionContext.completeTransition(true)
             })
         }
     }
     
-    @objc func dismissTapAction() {
-        dismiss(animated: true, completion: nil)
-    }
 }
 

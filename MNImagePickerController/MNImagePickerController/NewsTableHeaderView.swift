@@ -17,7 +17,6 @@ class NewsTableHeaderView: UIView {
         imageView.clipsToBounds = true
         return imageView
     }()
-    
     private lazy var boarderView: UIView = {
         let view = UIView()
         view.layer.shadowOffset = CGSize(width: 0, height: 0)
@@ -25,7 +24,6 @@ class NewsTableHeaderView: UIView {
         view.layer.shadowColor = UIColor.black.cgColor
         return view
     }()
-    
      lazy var portraitButton: UIButton = {
         let button = UIButton()
         button.setBackgroundImage(UIImage(named: "rect_portrait"), for: .normal)

@@ -16,7 +16,6 @@
 		7A1CFD37212E476A00ECCA5E /* NewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */; };
 		7A1CFD3B212E5D3700ECCA5E /* BrowseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFD3A212E5D3700ECCA5E /* BrowseViewController.swift */; };
 		7A1CFD3D212E7E0900ECCA5E /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFD3C212E7E0900ECCA5E /* Constant.swift */; };
-		7A2DFDD7212F98070027E236 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2DFDD6212F98070027E236 /* UIView+Extension.swift */; };
 		7A689E4E212D5F7500325D50 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */; };
 		7E32BC0A790B5F54E4E997FA /* Pods_MNImagePickerController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944DEEA8FD980ACB100A6851 /* Pods_MNImagePickerController.framework */; };
 /* End PBXBuildFile section */
@@ -35,7 +34,6 @@
 		7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTableViewCell.swift; sourceTree = "<group>"; };
 		7A1CFD3A212E5D3700ECCA5E /* BrowseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseViewController.swift; sourceTree = "<group>"; };
 		7A1CFD3C212E7E0900ECCA5E /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
-		7A2DFDD6212F98070027E236 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		944DEEA8FD980ACB100A6851 /* Pods_MNImagePickerController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MNImagePickerController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -86,8 +84,10 @@
 		7A0876BB212D56A90063701C /* MNImagePickerController */ = {
 			isa = PBXGroup;
 			children = (
+				7A1CFD3A212E5D3700ECCA5E /* BrowseViewController.swift */,
+				7A1CFD34212E426600ECCA5E /* NewsTableHeaderView.swift */,
+				7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */,
 				7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */,
-				7A2DFDD6212F98070027E236 /* UIView+Extension.swift */,
 			);
 			path = MNImagePickerController;
 			sourceTree = "<group>";
@@ -97,9 +97,6 @@
 			children = (
 				7A0876A8212D50F80063701C /* AppDelegate.swift */,
 				7A0876AA212D50F80063701C /* ViewController.swift */,
-				7A1CFD3A212E5D3700ECCA5E /* BrowseViewController.swift */,
-				7A1CFD34212E426600ECCA5E /* NewsTableHeaderView.swift */,
-				7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */,
 				7A1CFD3C212E7E0900ECCA5E /* Constant.swift */,
 			);
 			path = Demo;
@@ -237,7 +234,6 @@
 				7A1CFD3D212E7E0900ECCA5E /* Constant.swift in Sources */,
 				7A689E4E212D5F7500325D50 /* UIImage+Extension.swift in Sources */,
 				7A1CFD35212E426600ECCA5E /* NewsTableHeaderView.swift in Sources */,
-				7A2DFDD7212F98070027E236 /* UIView+Extension.swift in Sources */,
 				7A1CFD37212E476A00ECCA5E /* NewsTableViewCell.swift in Sources */,
 				7A0876AB212D50F80063701C /* ViewController.swift in Sources */,
 				7A0876A9212D50F80063701C /* AppDelegate.swift in Sources */,
