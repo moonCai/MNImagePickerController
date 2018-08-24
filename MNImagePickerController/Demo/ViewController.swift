@@ -126,8 +126,7 @@ extension ViewController: UITableViewDataSource {
 extension ViewController {
     
     @objc func portraitButtonAction(sender: UIButton) {
-        let currentRect = sender.convert(sender.frame, to: view)
-        portraitCurrentRect = currentRect
+        portraitCurrentRect = sender.convert(sender.frame, to: view)
         let controller = BrowseViewController()
         controller.transitioningDelegate = self
         controller.loadLargeImageData(largeImageString: portraitLarge)
@@ -161,20 +160,23 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
     public func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         
         let toView = transitionContext.view(forKey: UITransitionContextViewKey.to)
-        
         let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from)
+        let containerView = transitionContext.containerView
         transitionContext.containerView.addSubview(toView!)
         
         switch type {
         case .modal:
-            guard let toController = transitionContext.viewController(forKey: .to) as? BrowseViewController else { return }
+            let toController = transitionContext.viewController(forKey: .to) as! BrowseViewController
             toController.dismissClosure = { [unowned self] in
                 self.dismiss(animated: true, completion: nil)
             }
             
-            let snapshotView = self.headerView.portraitButton.snapshotView(afterScreenUpdates: true)!
+            let snapshotView = UIImageView(image: portraitImage)
+            snapshotView.contentMode = .scaleAspectFill
+            snapshotView.clipsToBounds = true
+            
             snapshotView.frame = self.portraitCurrentRect
-            transitionContext.containerView.addSubview(snapshotView)
+            containerView.addSubview(snapshotView)
             
             let zoomScale = screenWidth / portraitCurrentRect.width
             
@@ -202,12 +204,16 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             })
             
         case .dismiss:
-            transitionContext.containerView.insertSubview(toView!, belowSubview: fromView!)
+            let fromController = transitionContext.viewController(forKey: .from) as! BrowseViewController
             
-            guard let fromController = transitionContext.viewController(forKey: .from) as? BrowseViewController else { return }
-            let snapshotView = fromController.browseImageView.snapshotView(afterScreenUpdates: true)!
-            snapshotView.frame = CGRect(x: 0, y: (screenHeight - screenWidth) / 2, width: screenWidth, height: screenWidth)
-            transitionContext.containerView.addSubview(snapshotView)
+            let imageView = fromController.browseImageView
+            
+            let snapshotView = UIImageView(image: imageView.image)
+            snapshotView.clipsToBounds = true
+            snapshotView.contentMode = .scaleAspectFill
+            
+            snapshotView.frame = containerView.convert(imageView.frame, from: imageView.superview)
+            containerView.addSubview(snapshotView)
             
             fromView?.removeFromSuperview()
             
