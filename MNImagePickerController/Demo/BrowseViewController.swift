@@ -13,13 +13,14 @@ class BrowseViewController: UIViewController {
     var startRect: CGRect?
     var isZoom: Bool = false
     
-    private lazy var browseScrollView: UIScrollView = {
+     lazy var browseScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.delegate = self
         return scrollView
     }()
      lazy var browseImageView: UIImageView = {
         let imageview = UIImageView()
+        imageview.backgroundColor = .yellow
         imageview.contentMode = .scaleAspectFill
         imageview.clipsToBounds = true
         return imageview
@@ -40,18 +41,29 @@ class BrowseViewController: UIViewController {
          configureUI()
     }
     
-    private func configureUI() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(tapDismissAction))
-        view.addGestureRecognizer(tap)
-        
+     func configureUI() {
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(doubleTapAction(recognizer:)))
         doubleTap.numberOfTapsRequired = 2
         view.addGestureRecognizer(doubleTap)
         
-        tap.require(toFail: doubleTap)
+        browseScrollView.alpha = 0
+        browseImageView.alpha = 0
         
         view.addSubview(browseScrollView)
         browseScrollView.addSubview(browseImageView)
+        browseScrollView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(CGSize(width: screenWidth, height: screenWidth))
+        }
+        browseImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.size.equalTo(CGSize(width: screenWidth, height: screenWidth))
+        }
+    }
+    
+    func opaqueSubviews() {
+        browseScrollView.alpha = 1
+        browseImageView.alpha = 1
     }
     
     func loadLargeImageData(largeImageString: String) {
@@ -76,28 +88,6 @@ class BrowseViewController: UIViewController {
             }
         }.resume()
     }
-    
-    func setStarRect(rect: CGRect, image: UIImage) {
-        startRect = rect
-       browseImageView.image = image
-        browseScrollView.frame = rect
-        browseImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.size.equalTo(CGSize(width: rect.width, height: rect.height))
-        }
-
-        let scale = screenWidth / rect.width
-
-        UIView.animate(withDuration: 0.25, animations: {
-            var transform2 = CGAffineTransform(scaleX: scale, y: scale)
-            transform2.tx = self.view.center.x - rect.midX
-            transform2.ty =  self.view.center.y - rect.midY
-            self.browseScrollView.transform = transform2
-        }) { (_) in
-            print("动画结束")
-        }
-    }
-
 }
 
 extension BrowseViewController: UIScrollViewDelegate {
@@ -108,11 +98,6 @@ extension BrowseViewController: UIScrollViewDelegate {
 }
 
 extension BrowseViewController {
-    
-    // 单点手势
-    @objc func tapDismissAction() {
-        dismiss(animated: true, completion: nil)
-    }
     
     // 双击手势
     @objc func doubleTapAction(recognizer: UITapGestureRecognizer) {
@@ -139,7 +124,5 @@ extension BrowseViewController {
                 print("动画结束")
             }
         }
-     
     }
-    
 }

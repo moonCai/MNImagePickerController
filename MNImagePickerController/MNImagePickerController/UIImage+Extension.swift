@@ -10,6 +10,7 @@ import UIKit
 
 extension UIImage {
     
+    /// 生成1pt * 1pt的纯色图片
     class func createImageByColor(color: UIColor) -> UIImage? {
         let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
         UIGraphicsBeginImageContext(rect.size)
