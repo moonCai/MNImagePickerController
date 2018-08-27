@@ -28,7 +28,7 @@ class ViewController: UIViewController {
     
     private lazy var portraitImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.image = UIImage(named: "portrait")
         return imageView
@@ -175,14 +175,25 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             snapshotView.contentMode = .scaleAspectFill
             snapshotView.clipsToBounds = true
             
-            snapshotView.frame = self.portraitCurrentRect
+            var scale: CGFloat = 1
+            var originSize: CGSize = CGSize(width: 1, height: 1)
+            if snapshotView.bounds.size.width > snapshotView.bounds.size.height {
+                scale = snapshotView.bounds.size.width / snapshotView.bounds.size.height
+                originSize = CGSize(width:  portraitCurrentRect.width * scale, height:  portraitCurrentRect.width)
+            } else {
+                scale = snapshotView.bounds.size.height / snapshotView.bounds.size.width
+                originSize = CGSize(width:  portraitCurrentRect.width, height:  portraitCurrentRect.width * scale)
+            }
+            
+            snapshotView.frame.origin = self.portraitCurrentRect.origin
+            snapshotView.frame.size = originSize
             containerView.addSubview(snapshotView)
             
             let zoomScale = screenWidth / portraitCurrentRect.width
             
             var tran = CATransform3DIdentity
-            let translateX = screenWidth / 2 - self.portraitCurrentRect.midX
-            let translateY = screenHeight / 2 - self.portraitCurrentRect.midY
+            let translateX = screenWidth / 2 - snapshotView.frame.midX
+            let translateY = screenHeight / 2 - snapshotView.frame.midY
             tran = CATransform3DTranslate(tran, translateX, translateY, 50)
             tran.m34 = -1 / 1000.0
             tran = CATransform3DScale(tran, zoomScale, zoomScale, 1)
@@ -214,7 +225,7 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             containerView.addSubview(snapshotView)
             
             fromView?.removeFromSuperview()
-            
+
             let zoomScale = portraitCurrentRect.width / screenWidth
             
             var tran = CATransform3DIdentity
@@ -222,6 +233,7 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             let translateY = self.portraitCurrentRect.midY -  screenHeight / 2
             tran = CATransform3DTranslate(tran, translateX, translateY, -50)
             tran.m34 = -1 / 1000.0
+            
             tran = CATransform3DScale(tran, zoomScale, zoomScale, 1)
             self.headerView.portraitButton.alpha = 0
             

@@ -25,7 +25,7 @@ class BrowseViewController: UIViewController {
     lazy var browseImageView: UIImageView = {
         let imageview = UIImageView()
         imageview.image = UIImage(named: "rect_portrait")!
-        imageview.contentMode = .scaleAspectFill
+        imageview.contentMode = .scaleAspectFit
         imageview.clipsToBounds = true
         return imageview
     }()
@@ -57,8 +57,7 @@ class BrowseViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
         browseImageView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.size.equalTo(CGSize(width: screenWidth, height: screenWidth))
+            $0.edges.size.equalToSuperview()
         }
         indicatorView.snp.makeConstraints {
             $0.center.equalToSuperview()
@@ -108,22 +107,11 @@ extension BrowseViewController {
         isZoom = !isZoom
         switch isZoom {
         case true:
-            browseImageView.snp.remakeConstraints {
-                $0.edges.equalToSuperview()
-                $0.size.equalToSuperview()
-            }
             let point = recognizer.location(in: self.browseScrollView)
             browseScrollView.zoom(to: CGRect(origin: point, size: CGSize(width: 1, height: 1)), animated: true)
             browseScrollView.setZoomScale(2, animated: true)
         case false:
-            UIView.animate(withDuration: 0.25, animations: {
-                self.browseScrollView.setZoomScale(1, animated: true)
-            }) { (_) in
-                self.browseImageView.snp.remakeConstraints {
-                    $0.center.equalToSuperview()
-                    $0.size.equalTo(CGSize(width: screenWidth, height: screenWidth))
-                }
-            }
+            browseScrollView.setZoomScale(1, animated: true)
         }
     }
     
