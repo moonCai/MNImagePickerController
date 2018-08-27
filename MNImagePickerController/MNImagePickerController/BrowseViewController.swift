@@ -12,29 +12,31 @@ class BrowseViewController: UIViewController {
     
     // 是否是放大状态
     var isZoom: Bool = false
-
+    
     var dismissClosure: (()->())?
     
-     lazy var browseScrollView: UIScrollView = {
+    lazy var browseScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.delegate = self
+        scrollView.maximumZoomScale = 2
+        scrollView.minimumZoomScale = 1
         return scrollView
     }()
-     lazy var browseImageView: UIImageView = {
+    lazy var browseImageView: UIImageView = {
         let imageview = UIImageView()
         imageview.image = UIImage(named: "rect_portrait")!
         imageview.contentMode = .scaleAspectFill
         imageview.clipsToBounds = true
         return imageview
     }()
-      private lazy var indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
+    private lazy var indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         configureUI()
+        configureUI()
     }
     
-     private func configureUI() {
+    private func configureUI() {
         let oneTap = UITapGestureRecognizer(target: self, action: #selector(oneTapAtion))
         view.addGestureRecognizer(oneTap)
         
@@ -49,11 +51,10 @@ class BrowseViewController: UIViewController {
         
         view.addSubview(browseScrollView)
         view.addSubview(indicatorView)
-   
+        
         browseScrollView.addSubview(browseImageView)
         browseScrollView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.size.equalTo(CGSize(width: screenWidth, height: screenWidth))
+            $0.edges.equalToSuperview()
         }
         browseImageView.snp.makeConstraints {
             $0.center.equalToSuperview()
@@ -84,8 +85,9 @@ class BrowseViewController: UIViewController {
                     self.browseImageView.image = largeImage
                 }
             }
-        }.resume()
+            }.resume()
     }
+    
 }
 
 extension BrowseViewController: UIScrollViewDelegate {
@@ -93,34 +95,36 @@ extension BrowseViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return browseImageView
     }
+    
 }
 
 extension BrowseViewController {
     
-     // 单击手势
     @objc func oneTapAtion() {
         dismissClosure?()
     }
     
-    // 双击手势
     @objc func doubleTapAction(recognizer: UITapGestureRecognizer) {
         isZoom = !isZoom
         switch isZoom {
         case true:
-            UIView.animate(withDuration: 0.5, animations: {
-                self.browseScrollView.transform = CGAffineTransform(scaleX: 2, y: 2)
-//                self.browseImageView.transform  = CGAffineTransform(scaleX: 2, y: 2)
-            }) { (_) in
-                print("动画结束")
+            browseImageView.snp.remakeConstraints {
+                $0.edges.equalToSuperview()
+                $0.size.equalToSuperview()
             }
-            self.browseScrollView.contentSize = CGSize(width: screenWidth * 3, height: screenWidth * 4 - screenHeight)
+            let point = recognizer.location(in: self.browseScrollView)
+            browseScrollView.zoom(to: CGRect(origin: point, size: CGSize(width: 1, height: 1)), animated: true)
+            browseScrollView.setZoomScale(2, animated: true)
         case false:
-            UIView.animate(withDuration: 0.5, animations: {
-                self.browseScrollView.transform = .identity
-                self.browseImageView.transform = .identity
+            UIView.animate(withDuration: 0.25, animations: {
+                self.browseScrollView.setZoomScale(1, animated: true)
             }) { (_) in
-                print("动画结束")
+                self.browseImageView.snp.remakeConstraints {
+                    $0.center.equalToSuperview()
+                    $0.size.equalTo(CGSize(width: screenWidth, height: screenWidth))
+                }
             }
         }
     }
+    
 }

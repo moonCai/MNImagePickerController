@@ -188,11 +188,9 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             tran = CATransform3DScale(tran, zoomScale, zoomScale, 1)
             
             toView?.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-            toView?.transform = CGAffineTransform(translationX: 0, y: (toView?.bounds.size.height)!)
             UIView.animate(withDuration:transitionDuration(using: nil) * 0.5, animations: {
                 snapshotView.layer.transform = tran
                 fromView?.alpha = 0
-                toView?.transform = .identity
             }, completion: { (_) in
                 fromView?.removeFromSuperview()
                 UIView.animate(withDuration: self.transitionDuration(using: nil) * 0.5, animations: {
