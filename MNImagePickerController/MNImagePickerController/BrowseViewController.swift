@@ -10,6 +10,10 @@ import UIKit
 
 class BrowseViewController: UIViewController {
     
+    var titles: [String] = []
+    
+    let saveCellID = "saveCellID"
+    
     // 是否是放大状态
     var isZoom: Bool = false
     
@@ -35,8 +39,12 @@ class BrowseViewController: UIViewController {
         return button
     }()
     private lazy var sheetTableView: UITableView = {
-        let tableview = UITableView(frame: CGRect(x: 0, y: screenHeight, width: screenWidth , height: 80), style: .plain)
+        let tableview = UITableView(frame: CGRect(x: 0, y: screenHeight, width: screenWidth , height: 100), style: .plain)
         tableview.backgroundColor = .yellow
+        tableview.register(SheetTableCell.self, forCellReuseIdentifier: saveCellID)
+        tableview.delegate = self
+        tableview.dataSource = self
+        tableview.rowHeight = 45
         return tableview
     }()
     
@@ -63,6 +71,7 @@ class BrowseViewController: UIViewController {
         
         view.addSubview(browseScrollView)
         view.addSubview(indicatorView)
+        view.addSubview(dimmingButton)
         view.addSubview(sheetTableView)
         
         browseScrollView.addSubview(browseImageView)
@@ -118,6 +127,10 @@ class BrowseViewController: UIViewController {
         browseScrollView.zoomScale = zoomScale
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+    }
+    
 }
 
 extension BrowseViewController: UIScrollViewDelegate {
@@ -160,15 +173,117 @@ extension BrowseViewController {
     
     @objc func longPressGestureAction() {
         dimmingButton.isHidden = false
+        titles = ["保存图片", "取消"]
+        sheetTableView.reloadData()
         UIView.animate(withDuration: 0.25) {
-            self.sheetTableView.transform = CGAffineTransform(translationX: 0, y: -80)
+            self.sheetTableView.transform = CGAffineTransform(translationX: 0, y: -100)
         }
     }
     
     @objc func dimmingButtonAction() {
-        dimmingButton.isHidden = true
-        UIView.animate(withDuration: 0.25) {
-            self.sheetTableView.transform = .identity
+        UIView.animate(withDuration: 0.25, animations: {
+           self.sheetTableView.transform = .identity
+        }) { (_) in
+            self.dimmingButton.isHidden = true
+        }
+    }
+    
+}
+
+extension BrowseViewController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return titles.count == 0 ? 0 : 2
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard titles.count != 0 else { return 0 }
+        if section == 0 {
+            return titles.count - 1
+        } else if section == 1 {
+            return 1
+        } else {
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: saveCellID, for: indexPath) as! SheetTableCell
+        if indexPath.section == 0 {
+            cell.titleLabel.text = titles[indexPath.row]
+        } else {
+            cell.titleLabel.text = titles.last
+        }
+        return cell
+    }
+}
+
+extension BrowseViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 1 {
+            UIView.animate(withDuration: 0.25, animations: {
+                self.sheetTableView.transform = .identity
+            }) { (_) in
+                self.dimmingButton.isHidden = true
+            }
+        } else {
+            print(indexPath.row)
+            UIView.animate(withDuration: 0.25, animations: {
+                self.sheetTableView.transform = .identity
+            }) { (_) in
+                self.dimmingButton.isHidden = true
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 1 {
+            let view = UIView()
+            view.backgroundColor = .groupTableViewBackground
+            return view
+        } else {
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return section == 1 ? 10 : 0.1
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.1
+    }
+    
+}
+
+class SheetTableCell: UITableViewCell {
+    
+    lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 18)
+        label.textColor = .black
+        return label
+    }()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        configureUI()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configureUI() {
+        contentView.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
     
