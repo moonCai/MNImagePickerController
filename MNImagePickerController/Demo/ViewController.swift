@@ -8,6 +8,8 @@
 
 import UIKit
 import SnapKit
+import MobileCoreServices
+import AssetsLibrary
 
 enum MNAnimatorType {
     case modal
@@ -47,6 +49,12 @@ class ViewController: UIViewController {
     }()
     private lazy var mediaChooseSheetView = MediaChooseSheetView()
     private lazy var indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
+    
+    private lazy var pickerController: UIImagePickerController = {
+        let controller = UIImagePickerController()
+        controller.delegate = self
+        return controller
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,12 +107,21 @@ extension ViewController {
             $0.height.equalTo(175)
         }
         
-        mediaChooseSheetView.mediaTypeClosure = { type in
+        mediaChooseSheetView.mediaTypeClosure = { [unowned self] type in
             self.dimmingButtonAction()
             switch type {
-            case .shoot:
-                print("拍摄图片/视频")
-            case .album:
+            case .shoot:  // 拍照 / 拍视频
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    let availableMediaTypes = UIImagePickerController.availableMediaTypes(for: .camera)!
+                    let imageType = kUTTypeImage as String
+                    let videoType = kUTTypeMovie as String
+                    if availableMediaTypes.contains(imageType), availableMediaTypes.contains(videoType) {
+                        self.pickerController.sourceType = .camera
+                        self.pickerController.mediaTypes = [imageType, videoType]
+                        self.present(self.pickerController, animated: true, completion: nil)
+                    }
+                }
+            case .album: // 从相册选择
                 print("从相册选择")
             case .cancel:
                 print("取消")
@@ -144,7 +161,7 @@ extension ViewController {
 // MARK: - UITableViewDataSource
 extension ViewController: UITableViewDataSource {
     
-     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 8
     }
     
@@ -161,10 +178,10 @@ extension ViewController {
         let thumbnailSize = (sender.imageView?.image?.size)!
         portraitCurrentRect = sender.convert(sender.frame, to: view)
         let scale = (thumbnailSize.width / thumbnailSize.height) / (sender.bounds.width / sender.bounds.height)
-        if scale > 1 { // 宽图
+        if scale > 1 { // 宽度被裁切
             portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x - (scale - 1) * portraitCurrentRect.width / 2 , y: portraitCurrentRect.origin.y, width: portraitCurrentRect.width * scale, height: portraitCurrentRect.height)
-        } else if scale < 1 { // 长图
-            portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x , y: portraitCurrentRect.origin.y - (scale - 1) * portraitCurrentRect.height / 2 , width: portraitCurrentRect.width, height: portraitCurrentRect.height * scale)
+        } else if scale < 1 { // 长度被裁切
+            portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x , y: portraitCurrentRect.origin.y - (scale - 1) * portraitCurrentRect.height / 2 , width: portraitCurrentRect.width, height: portraitCurrentRect.height / scale)
         }
         
         let controller = SimpleImageBrowseViewController()
@@ -188,6 +205,36 @@ extension ViewController {
         }
     }
     
+    // 保存照片到系统相册的回调
+    @objc func didFinishSavingPhoto(image: UIImage, error: Error?, observationInfo: UnsafeMutableRawPointer) {
+        if error != nil {
+            print("保存失败")
+        } else {
+            print("❤️❤️已保存到系统相册❤️❤️")
+        }
+    }
+    
+}
+
+extension ViewController:  UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        guard let mediaType = info["UIImagePickerControllerMediaType"] as? String else { return }
+        if mediaType == "public.movie" {
+            guard let videoFileURL = info["UIImagePickerControllerMediaURL"] as? URL else { return }
+            ALAssetsLibrary().writeVideoAtPath(toSavedPhotosAlbum: videoFileURL) { (videoURL, error) in
+                if error != nil {
+                    print("视频保存失败")
+                } else {
+                    print(videoURL)
+                }
+            }
+        } else if mediaType == "public.image" {
+            let originImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
+            UIImageWriteToSavedPhotosAlbum(originImage, self, #selector(self.didFinishSavingPhoto(image:error:observationInfo:)), nil)
+        }
+    }
 }
 
 extension ViewController: UIViewControllerTransitioningDelegate {
