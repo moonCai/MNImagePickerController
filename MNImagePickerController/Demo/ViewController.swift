@@ -18,12 +18,12 @@ class ViewController: UIViewController {
     
     // 转场类型
     private var type: MNAnimatorType = .modal
-    // 头像被点击时在屏幕上的位置
+    // 单图被点击时在屏幕上的位置
     private var portraitCurrentRect = CGRect()
+    // 缩略图
     private lazy var portraitImage = UIImage(named: "rect_portrait")!
     
     private lazy var headerView = NewsTableHeaderView()
-    
     private lazy var portraitImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -31,7 +31,6 @@ class ViewController: UIViewController {
         imageView.image = UIImage(named: "portrait")
         return imageView
     }()
-    
     private lazy var newsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
@@ -41,7 +40,7 @@ class ViewController: UIViewController {
     }()
     private lazy var indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
     
-    override var preferredStatusBarStyle: UIStatusBarStyle { get { return.lightContent }}
+//    override var preferredStatusBarStyle: UIStatusBarStyle { get { return.lightContent }}
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,6 +86,11 @@ extension ViewController {
         indicatorView.startAnimating()
     }
     
+}
+
+// MARK: - 加载图片
+extension ViewController {
+    
     private func loadPortraitImageData() {
         guard let url = URL(string: portraitThumb) else { return }
         URLSession.shared.dataTask(with: url) { [unowned self] (data, response, error) in
@@ -100,7 +104,7 @@ extension ViewController {
                     if let image = UIImage(data: imageData) {
                         self.portraitImage = image
                         self.headerView.portraitButton.setImage(image, for: .normal)
-                    } 
+                    }
                 }
             }
             }.resume()
@@ -108,9 +112,10 @@ extension ViewController {
     
 }
 
+// MARK: - UITableViewDataSource
 extension ViewController: UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 8
     }
     
@@ -140,7 +145,9 @@ extension ViewController {
     }
     
     @objc func cameraButtonAction(sender: UIButton) {
-        print("cameraButtonAction")
+        let controller = UIViewController()
+        controller.view.backgroundColor = .yellow
+        present(controller, animated: true, completion: nil)
     }
 }
 
