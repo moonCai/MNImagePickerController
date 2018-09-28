@@ -26,7 +26,7 @@ class NewsTableHeaderView: UIView {
     }()
      lazy var portraitButton: UIButton = {
         let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "rect_portrait"), for: .normal)
+        button.setImage(UIImage(named: "rect_portrait"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFill
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 2

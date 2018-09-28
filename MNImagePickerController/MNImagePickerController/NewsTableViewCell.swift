@@ -8,6 +8,7 @@
 
 import UIKit
 
+let NewsTableViewCellID = "NewsTableViewCellID"
 class NewsTableViewCell: UITableViewCell {
     
     private lazy var dateLabel: UILabel = {
@@ -24,7 +25,7 @@ class NewsTableViewCell: UITableViewCell {
     }()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        super.init(style: style, reuseIdentifier: NewsTableViewCellID)
         configureUI()
     }
     

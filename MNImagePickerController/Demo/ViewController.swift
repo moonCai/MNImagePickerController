@@ -4,7 +4,7 @@
 //
 //  Created by 瓷月亮 on 2018/8/22.
 //  Copyright © 2018年 T. All rights reserved.
-//
+// 
 
 import UIKit
 import SnapKit
@@ -22,8 +22,6 @@ class ViewController: UIViewController {
     private var portraitCurrentRect = CGRect()
     private lazy var portraitImage = UIImage(named: "rect_portrait")!
     
-    let CellID = "CellID"
-    
     private lazy var headerView = NewsTableHeaderView()
     
     private lazy var portraitImageView: UIImageView = {
@@ -38,7 +36,7 @@ class ViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.rowHeight = 120
-        tableView.register(NewsTableViewCell.self, forCellReuseIdentifier: CellID)
+        tableView.register(NewsTableViewCell.self, forCellReuseIdentifier: NewsTableViewCellID)
         return tableView
     }()
     private lazy var indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
@@ -101,7 +99,7 @@ extension ViewController {
                 DispatchQueue.main.async {
                     if let image = UIImage(data: imageData) {
                         self.portraitImage = image
-                        self.headerView.portraitButton.setBackgroundImage(image, for: .normal)
+                        self.headerView.portraitButton.setImage(image, for: .normal)
                     } 
                 }
             }
@@ -117,7 +115,7 @@ extension ViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CellID, for: indexPath) as! NewsTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: NewsTableViewCellID, for: indexPath) as! NewsTableViewCell
         cell.cameraButton.addTarget(self, action: #selector(cameraButtonAction(sender:)), for: .touchUpInside)
         return cell
     }
@@ -126,8 +124,16 @@ extension ViewController: UITableViewDataSource {
 extension ViewController {
     
     @objc func portraitButtonAction(sender: UIButton) {
+        let thumbnailSize = (sender.imageView?.image?.size)!
         portraitCurrentRect = sender.convert(sender.frame, to: view)
-        let controller = BrowseViewController()
+        let scale = (thumbnailSize.width / thumbnailSize.height) / (sender.bounds.width / sender.bounds.height)
+        if scale > 1 { // 宽图
+            portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x - (scale - 1) * portraitCurrentRect.width / 2 , y: portraitCurrentRect.origin.y, width: portraitCurrentRect.width * scale, height: portraitCurrentRect.height)
+        } else if scale < 1 { // 长图
+            portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x , y: portraitCurrentRect.origin.y - (scale - 1) * portraitCurrentRect.height / 2 , width: portraitCurrentRect.width, height: portraitCurrentRect.height * scale)
+        }
+        
+        let controller = SimpleImageBrowseViewController()
         controller.transitioningDelegate = self
         controller.loadLargeImageData(largeImageString: portraitLarge)
         self.present(controller, animated: true, completion: nil)
@@ -166,7 +172,7 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
         
         switch type {
         case .modal:
-            let toController = transitionContext.viewController(forKey: .to) as! BrowseViewController
+            let toController = transitionContext.viewController(forKey: .to) as! SimpleImageBrowseViewController
             toController.dismissClosure = { [unowned self] in
                 self.dismiss(animated: true, completion: nil)
             }
@@ -175,18 +181,7 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             snapshotView.contentMode = .scaleAspectFill
             snapshotView.clipsToBounds = true
             
-            var scale: CGFloat = 1
-            var originSize: CGSize = CGSize(width: 1, height: 1)
-            if snapshotView.bounds.size.width > snapshotView.bounds.size.height {
-                scale = snapshotView.bounds.size.width / snapshotView.bounds.size.height
-                originSize = CGSize(width:  portraitCurrentRect.width * scale, height:  portraitCurrentRect.width)
-            } else {
-                scale = snapshotView.bounds.size.height / snapshotView.bounds.size.width
-                originSize = CGSize(width:  portraitCurrentRect.width, height:  portraitCurrentRect.width * scale)
-            }
-            
-            snapshotView.frame.origin = self.portraitCurrentRect.origin
-            snapshotView.frame.size = originSize
+            snapshotView.frame = self.portraitCurrentRect
             containerView.addSubview(snapshotView)
             
             let zoomScale = screenWidth / portraitCurrentRect.width
@@ -213,7 +208,7 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             })
             
         case .dismiss:
-            let fromController = transitionContext.viewController(forKey: .from) as! BrowseViewController
+            let fromController = transitionContext.viewController(forKey: .from) as! SimpleImageBrowseViewController
             
             let imageView = fromController.browseImageView
             
@@ -225,7 +220,7 @@ extension ViewController: UIViewControllerAnimatedTransitioning {
             containerView.addSubview(snapshotView)
             
             fromView?.removeFromSuperview()
-
+            
             let zoomScale = portraitCurrentRect.width / screenWidth
             
             var tran = CATransform3DIdentity
