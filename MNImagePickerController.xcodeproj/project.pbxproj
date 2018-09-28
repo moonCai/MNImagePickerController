@@ -19,6 +19,7 @@
 		7A1FA67C215DEB6800F37BBD /* BrowseTransitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1FA67B215DEB6800F37BBD /* BrowseTransitionViewController.swift */; };
 		7A447D4621350F9400FE754B /* SaveSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A447D4521350F9400FE754B /* SaveSheetView.swift */; };
 		7A689E4E212D5F7500325D50 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */; };
+		7A798C28215DFA4000619F05 /* MediaChooseSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A798C27215DFA4000619F05 /* MediaChooseSheetView.swift */; };
 		7E32BC0A790B5F54E4E997FA /* Pods_MNImagePickerController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944DEEA8FD980ACB100A6851 /* Pods_MNImagePickerController.framework */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +40,7 @@
 		7A1FA67B215DEB6800F37BBD /* BrowseTransitionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseTransitionViewController.swift; sourceTree = "<group>"; };
 		7A447D4521350F9400FE754B /* SaveSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveSheetView.swift; sourceTree = "<group>"; };
 		7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
+		7A798C27215DFA4000619F05 /* MediaChooseSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaChooseSheetView.swift; sourceTree = "<group>"; };
 		944DEEA8FD980ACB100A6851 /* Pods_MNImagePickerController.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MNImagePickerController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -92,6 +94,7 @@
 				7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */,
 				7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */,
 				7A447D4521350F9400FE754B /* SaveSheetView.swift */,
+				7A798C27215DFA4000619F05 /* MediaChooseSheetView.swift */,
 				7A1FA65B215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift */,
 				7A1FA67B215DEB6800F37BBD /* BrowseTransitionViewController.swift */,
 			);
@@ -239,6 +242,7 @@
 			files = (
 				7A1FA67C215DEB6800F37BBD /* BrowseTransitionViewController.swift in Sources */,
 				7A1CFD3D212E7E0900ECCA5E /* Constant.swift in Sources */,
+				7A798C28215DFA4000619F05 /* MediaChooseSheetView.swift in Sources */,
 				7A1FA65C215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift in Sources */,
 				7A447D4621350F9400FE754B /* SaveSheetView.swift in Sources */,
 				7A689E4E212D5F7500325D50 /* UIImage+Extension.swift in Sources */,

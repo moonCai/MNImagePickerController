@@ -38,9 +38,15 @@ class ViewController: UIViewController {
         tableView.register(NewsTableViewCell.self, forCellReuseIdentifier: NewsTableViewCellID)
         return tableView
     }()
+    private lazy var dimmingButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
+        button.backgroundColor = UIColor(white: 0, alpha: 0.4)
+        button.isHidden = true
+        button.addTarget(self, action: #selector(dimmingButtonAction), for: .touchUpInside)
+        return button
+    }()
+    private lazy var mediaChooseSheetView = MediaChooseSheetView()
     private lazy var indicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
-    
-//    override var preferredStatusBarStyle: UIStatusBarStyle { get { return.lightContent }}
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,6 +75,8 @@ extension ViewController {
     private func configureUI() {
         view.addSubview(newsTableView)
         view.addSubview(indicatorView)
+        view.addSubview(dimmingButton)
+        view.addSubview(mediaChooseSheetView)
         
         headerView.frame.size.height = 3 * screenWidth / 4 + 40
         newsTableView.tableHeaderView = headerView
@@ -82,7 +90,28 @@ extension ViewController {
         indicatorView.snp.makeConstraints {
             $0.center.equalTo(headerView.portraitButton)
         }
+        dimmingButton.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        mediaChooseSheetView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(view.snp.bottom)
+            $0.height.equalTo(175)
+        }
         
+        mediaChooseSheetView.mediaTypeClosure = { type in
+            self.dimmingButtonAction()
+            switch type {
+            case .shoot:
+                print("拍摄图片/视频")
+            case .album:
+                print("从相册选择")
+            case .cancel:
+                print("取消")
+            }
+        }
+        
+        dimmingButton.isHidden = true
         indicatorView.startAnimating()
     }
     
@@ -145,10 +174,20 @@ extension ViewController {
     }
     
     @objc func cameraButtonAction(sender: UIButton) {
-        let controller = UIViewController()
-        controller.view.backgroundColor = .yellow
-        present(controller, animated: true, completion: nil)
+        dimmingButton.isHidden = false
+        UIView.animate(withDuration: 0.25) {
+            self.mediaChooseSheetView.transform = CGAffineTransform(translationX: 0, y: -175)
+        }
     }
+    
+    @objc func dimmingButtonAction() {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.mediaChooseSheetView.transform = .identity
+        }) { (_) in
+            self.dimmingButton.isHidden = true
+        }
+    }
+    
 }
 
 extension ViewController: UIViewControllerTransitioningDelegate {
