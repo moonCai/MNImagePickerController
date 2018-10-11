@@ -11,15 +11,11 @@ import SnapKit
 import MobileCoreServices
 import AssetsLibrary
 
-enum MNAnimatorType {
-    case modal
-    case dismiss
-}
-
 class ViewController: UIViewController {
     
-    // 转场类型
-    private var type: MNAnimatorType = .modal
+    // 动画器
+    var animator = TransitionAnimator()
+    
     // 单图被点击时在屏幕上的位置
     private var portraitCurrentRect = CGRect()
     // 缩略图
@@ -183,10 +179,12 @@ extension ViewController {
         } else if scale < 1 { // 长度被裁切
             portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x , y: portraitCurrentRect.origin.y - (scale - 1) * portraitCurrentRect.height / 2 , width: portraitCurrentRect.width, height: portraitCurrentRect.height / scale)
         }
-        
+
         let controller = SimpleImageBrowseViewController()
         controller.transitioningDelegate = self
-        controller.loadLargeImageData(largeImageString: portraitLarge)
+        // 大图 / 缩略图 / 初始位置
+        controller.photoURLString = portraitLarge
+//        controller.loadLargeImageData(largeImageString: portraitLarge)
         self.present(controller, animated: true, completion: nil)
     }
     
@@ -239,102 +237,19 @@ extension ViewController:  UIImagePickerControllerDelegate & UINavigationControl
 
 extension ViewController: UIViewControllerTransitioningDelegate {
     
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        type = .modal
-        return self
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        animator.type = .dismiss
+        return animator
     }
     
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        type = .dismiss
-        return self
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        animator.type = .modal
+        animator.portraitImage = self.portraitImage
+        animator.portraitCurrentRect = portraitCurrentRect
+        return animator
     }
 }
 
-extension ViewController: UIViewControllerAnimatedTransitioning {
-    
-    public func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 1.0
-    }
-    
-    public func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        
-        let toView = transitionContext.view(forKey: UITransitionContextViewKey.to)
-        let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from)
-        let containerView = transitionContext.containerView
-        transitionContext.containerView.addSubview(toView!)
-        
-        switch type {
-        case .modal:
-            let toController = transitionContext.viewController(forKey: .to) as! SimpleImageBrowseViewController
-            toController.dismissClosure = { [unowned self] in
-                self.dismiss(animated: true, completion: nil)
-            }
-            
-            let snapshotView = UIImageView(image: portraitImage)
-            snapshotView.contentMode = .scaleAspectFill
-            snapshotView.clipsToBounds = true
-            
-            snapshotView.frame = self.portraitCurrentRect
-            containerView.addSubview(snapshotView)
-            
-            let zoomScale = screenWidth / portraitCurrentRect.width
-            
-            var tran = CATransform3DIdentity
-            let translateX = screenWidth / 2 - snapshotView.frame.midX
-            let translateY = screenHeight / 2 - snapshotView.frame.midY
-            tran = CATransform3DTranslate(tran, translateX, translateY, 50)
-            tran.m34 = -1 / 1000.0
-            tran = CATransform3DScale(tran, zoomScale, zoomScale, 1)
-            
-            toView?.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-            UIView.animate(withDuration:transitionDuration(using: nil) * 0.5, animations: {
-                snapshotView.layer.transform = tran
-                fromView?.alpha = 0
-            }, completion: { (_) in
-                fromView?.removeFromSuperview()
-                UIView.animate(withDuration: self.transitionDuration(using: nil) * 0.5, animations: {
-                    toController.opaqueSubviews()
-                }, completion: { (_) in
-                    snapshotView.removeFromSuperview()
-                    transitionContext.completeTransition(true)
-                })
-            })
-            
-        case .dismiss:
-            let fromController = transitionContext.viewController(forKey: .from) as! SimpleImageBrowseViewController
-            
-            let imageView = fromController.browseImageView
-            
-            let snapshotView = UIImageView(image: imageView.image)
-            snapshotView.clipsToBounds = true
-            snapshotView.contentMode = .scaleAspectFill
-            
-            snapshotView.frame = containerView.convert(imageView.frame, from: imageView.superview)
-            containerView.addSubview(snapshotView)
-            
-            fromView?.removeFromSuperview()
-            
-            let zoomScale = portraitCurrentRect.width / screenWidth
-            
-            var tran = CATransform3DIdentity
-            let translateX = self.portraitCurrentRect.midX - screenWidth / 2
-            let translateY = self.portraitCurrentRect.midY -  screenHeight / 2
-            tran = CATransform3DTranslate(tran, translateX, translateY, -50)
-            tran.m34 = -1 / 1000.0
-            
-            tran = CATransform3DScale(tran, zoomScale, zoomScale, 1)
-            self.headerView.portraitButton.alpha = 0
-            
-            UIView.animate(withDuration: self.transitionDuration(using: nil) * 0.5, animations: {
-                snapshotView.layer.transform = tran
-                toView?.alpha = 1
-                self.headerView.portraitButton.alpha = 1
-            }, completion: { (_) in
-                snapshotView.removeFromSuperview()
-                transitionContext.completeTransition(true)
-            })
-        }
-    }
-    
-}
+
+
 

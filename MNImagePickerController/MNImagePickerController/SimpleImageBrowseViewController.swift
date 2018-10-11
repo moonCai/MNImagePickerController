@@ -12,8 +12,8 @@ class SimpleImageBrowseViewController: UIViewController {
 
     // 是否是放大状态
     var isZoom: Bool = false
-    
-    var dismissClosure: (()->())?
+    // 浏览的大图
+    var photoURLString: String?
     
     lazy var browseScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -36,9 +36,21 @@ class SimpleImageBrowseViewController: UIViewController {
     }()
     private lazy var sheetView = SaveSheetView(frame: CGRect(x: 0, y: screenHeight, width: screenWidth , height: 120))
     
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.modalTransitionStyle = .crossDissolve
+        self.modalPresentationStyle = .fullScreen
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        guard let photoString = photoURLString else { return }
+        loadLargeImageData(largeImageString: photoString)
     }
     
     private func configureUI() {
@@ -164,7 +176,7 @@ extension SimpleImageBrowseViewController {
             isZoom = false
             browseScrollView.setZoomScale(browseScrollView.minimumZoomScale, animated: true)
         } else {
-            dismissClosure?()
+            dismiss(animated: true, completion: nil)
         }
     }
     
@@ -195,3 +207,7 @@ extension SimpleImageBrowseViewController {
     }
     
 }
+
+
+
+
