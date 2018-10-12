@@ -52,5 +52,7 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>&quot;如果不允许, 您将无法拍摄照片/视频&quot;,且无法使用与其相关功能</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>&quot;如果不允许, 您将无法拍摄照片/视频&quot;,且无法使用与其相关功能</string>
 </dict>
 </plist>

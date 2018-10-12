@@ -90,8 +90,6 @@
 		7A0876BB212D56A90063701C /* MNImagePickerController */ = {
 			isa = PBXGroup;
 			children = (
-				7A1CFD34212E426600ECCA5E /* NewsTableHeaderView.swift */,
-				7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */,
 				7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */,
 				7A447D4521350F9400FE754B /* SaveSheetView.swift */,
 				7A798C27215DFA4000619F05 /* MediaChooseSheetView.swift */,
@@ -106,6 +104,8 @@
 			children = (
 				7A0876A8212D50F80063701C /* AppDelegate.swift */,
 				7A0876AA212D50F80063701C /* ViewController.swift */,
+				7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */,
+				7A1CFD34212E426600ECCA5E /* NewsTableHeaderView.swift */,
 				7A1CFD3C212E7E0900ECCA5E /* Constant.swift */,
 			);
 			path = Demo;

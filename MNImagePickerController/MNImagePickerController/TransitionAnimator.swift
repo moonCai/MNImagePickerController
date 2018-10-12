@@ -76,6 +76,7 @@ extension TransitionAnimator: UIViewControllerAnimatedTransitioning {
                 })
             })
         case .dismiss:
+            
             let fromController = transitionContext.viewController(forKey: .from) as! SimpleImageBrowseViewController
             
             let imageView = fromController.browseImageView
@@ -86,21 +87,18 @@ extension TransitionAnimator: UIViewControllerAnimatedTransitioning {
             largeImageView.frame = fromController.browseScrollView.convert(imageView.frame, to: fromView)
             containerView.addSubview(largeImageView)
             
-            let zoomScale = portraitCurrentRect.width / screenWidth
+            let toImageView = fromController.animatedFromView
+            let largeImageViewFrame = toImageView.convert(toImageView.bounds, to: containerView)
+            var transform = CATransform3DIdentity
+            transform.m34 = -1 / 1000.0
+            largeImageView.layer.transform = transform
             
-            var tran = CATransform3DIdentity
-            let translateX = self.portraitCurrentRect.midX - screenWidth / 2
-            let translateY = self.portraitCurrentRect.midY -  screenHeight / 2
-            tran = CATransform3DTranslate(tran, translateX, translateY, -250)
-            tran.m34 = -1 / 1000.0
-            tran = CATransform3DScale(tran, zoomScale, zoomScale, 1)
-
+            fromController.browseImageView.isHidden = true
             toView.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
             
-            UIView.animate(withDuration: self.transitionDuration(using: nil) , animations: {
-                fromView.alpha = 0
+            UIView.animate(withDuration: self.transitionDuration(using: nil) * 0.5 , animations: {
                 toView.alpha = 1
-                largeImageView.layer.transform = tran
+                largeImageView.frame = largeImageViewFrame
             }, completion: { (_) in
                 fromView.removeFromSuperview()
                 largeImageView.removeFromSuperview()

@@ -13,22 +13,7 @@ import AssetsLibrary
 
 class ViewController: UIViewController {
     
-    // 动画器
-    var animator = TransitionAnimator()
-    
-    // 单图被点击时在屏幕上的位置
-    private var portraitCurrentRect = CGRect()
-    // 缩略图
-    private lazy var portraitImage = UIImage(named: "rect_portrait")!
-    
     private lazy var headerView = NewsTableHeaderView()
-    private lazy var portraitImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        imageView.image = UIImage(named: "portrait")
-        return imageView
-    }()
     private lazy var newsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
@@ -144,7 +129,6 @@ extension ViewController {
             } else if let imageData = data {
                 DispatchQueue.main.async {
                     if let image = UIImage(data: imageData) {
-                        self.portraitImage = image
                         self.headerView.portraitButton.setImage(image, for: .normal)
                     }
                 }
@@ -170,6 +154,7 @@ extension ViewController: UITableViewDataSource {
 
 extension ViewController {
     
+    // 浏览头像
     @objc func portraitButtonAction(sender: UIButton) {
         guard let thumbImage = sender.currentImage else { return }
         let controller = SimpleImageBrowseViewController(thumbImage: thumbImage, photoString: portraitLarge, animatatedFromView: sender)
@@ -201,6 +186,14 @@ extension ViewController {
         }
     }
     
+    @objc func didFinishSavingVideo(videoPath: String, error: Error?, observationInfo: UnsafeMutableRawPointer) {
+        if error != nil {
+            print("保存失败")
+        } else {
+            print("❤️❤️已保存到系统相册❤️❤️")
+        }
+    }
+    
 }
 
 extension ViewController:  UIImagePickerControllerDelegate & UINavigationControllerDelegate {
@@ -209,14 +202,8 @@ extension ViewController:  UIImagePickerControllerDelegate & UINavigationControl
         picker.dismiss(animated: true, completion: nil)
         guard let mediaType = info["UIImagePickerControllerMediaType"] as? String else { return }
         if mediaType == "public.movie" {
-            guard let videoFileURL = info["UIImagePickerControllerMediaURL"] as? URL else { return }
-            ALAssetsLibrary().writeVideoAtPath(toSavedPhotosAlbum: videoFileURL) { (videoURL, error) in
-                if error != nil {
-                    print("视频保存失败")
-                } else {
-                    print(videoURL)
-                }
-            }
+            guard let videoFileString = info["UIImagePickerControllerMediaURL"] as? String else { return }
+            UISaveVideoAtPathToSavedPhotosAlbum(videoFileString, self, #selector(self.didFinishSavingVideo(videoPath:error:observationInfo:)), nil)
         } else if mediaType == "public.image" {
             let originImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
             UIImageWriteToSavedPhotosAlbum(originImage, self, #selector(self.didFinishSavingPhoto(image:error:observationInfo:)), nil)

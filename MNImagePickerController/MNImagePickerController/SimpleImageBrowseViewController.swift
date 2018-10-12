@@ -12,6 +12,8 @@ class SimpleImageBrowseViewController: UIViewController {
 
     // 单图被点击时在屏幕上的位置
     var portraitCurrentRect = CGRect()
+    // 动画来源视图
+    var animatedFromView = UIView()
     // 缩略图
     lazy var portraitImage = UIImage()
     // 是否是放大状态
@@ -55,6 +57,7 @@ class SimpleImageBrowseViewController: UIViewController {
         let thumbnailSize = thumbImage.size
         portraitCurrentRect = animatedView.convert(animatedView.frame, to: view)
         portraitImage = thumbImage
+        animatedFromView = animatedView
         
         let scale = (thumbnailSize.width / thumbnailSize.height) / (animatedView.bounds.width / animatedView.bounds.height)
         if scale > 1 { // 宽度被裁切
