@@ -34,6 +34,8 @@ class NewsTableViewCell: UITableViewCell {
     }
     
     private func configureUI() {
+        selectionStyle = .none
+        
         contentView.addSubview(dateLabel)
         contentView.addSubview(cameraButton)
         

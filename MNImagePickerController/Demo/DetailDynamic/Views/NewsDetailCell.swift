@@ -9,20 +9,28 @@
 import UIKit
 
 let NewsDetailCellID = "NewsDetailCellID"
+let ImageCollectionViewCellID = "ImageCollectionViewCellID"
+let imageCellWH: CGFloat = (screenWidth - 50) / 3
 class NewsDetailCell: UITableViewCell {
     
-    lazy var desribeTextView: UITextView = {
-        let textView = UITextView()
+    lazy var desribeTextView: PlaceholderTextView = {
+        let textView = PlaceholderTextView()
         textView.font = UIFont.systemFont(ofSize: 15)
-        textView.text = "这一刻的想法..."
+         textView.placeLabel.font = UIFont.systemFont(ofSize: 15)
         textView.textColor = .darkGray
+        textView.placeLabel.text = "这一刻的想法.."
+        textView.delegate = self
         return textView
     }()
     
     lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.itemSize = CGSize(width: imageCellWH, height: imageCellWH)
+        flowLayout.minimumInteritemSpacing = 5
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.backgroundColor = .yellow
+        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: ImageCollectionViewCellID)
+        collectionView.dataSource = self
+        collectionView.backgroundColor = .white
         return collectionView
     }()
 
@@ -36,6 +44,8 @@ class NewsDetailCell: UITableViewCell {
     }
     
     func configureUI() {
+        selectionStyle = .none
+        
         contentView.addSubview(desribeTextView)
         contentView.addSubview(collectionView)
         
@@ -50,9 +60,29 @@ class NewsDetailCell: UITableViewCell {
             $0.leading.equalToSuperview().offset(20)
             $0.top.equalTo(desribeTextView.snp.bottom).offset(15)
             $0.trailing.equalToSuperview().offset(-20)
-            $0.height.equalTo(140)
+            $0.height.equalTo(imageCellWH)
             $0.bottom.equalToSuperview().offset(-15)
         }
     }
 
+}
+
+extension NewsDetailCell: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCellID, for: indexPath)
+        return cell
+    }
+}
+
+extension NewsDetailCell: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        guard textView == desribeTextView else { return }
+        desribeTextView.placeLabel.isHidden = textView.hasText
+    }
 }
