@@ -236,9 +236,15 @@ extension SimpleImageBrowseViewController {
     // - 保存图片至相册的监听回调
     @objc func didFinishSavingPhoto(image: UIImage, error: Error?, observationInfo: UnsafeMutableRawPointer) {
         if error != nil {
-            print("保存失败")
+            let alertController = UIAlertController(title:  "保存失败: \(error?.localizedDescription ?? "")", message: "", preferredStyle: .alert)
+            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
+            alertController.addAction(action)
+            present(alertController, animated: true, completion: nil)
         } else {
-            print("❤️❤️已保存到系统相册❤️❤️")
+            let alertController = UIAlertController(title: "保存成功", message: "", preferredStyle: .alert)
+            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
+            alertController.addAction(action)
+            present(alertController, animated: true, completion: nil)
         }
     }
     

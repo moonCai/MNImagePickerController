@@ -160,7 +160,8 @@ extension ViewController:  UIImagePickerControllerDelegate & UINavigationControl
         guard let mediaType = info["UIImagePickerControllerMediaType"] as? String else { return }
         if mediaType == "public.movie" {
             guard let videoFileURL = info["UIImagePickerControllerMediaURL"] as? URL else { return }
-            UISaveVideoAtPathToSavedPhotosAlbum(videoFileURL.absoluteString, self, #selector(self.didFinishSavingVideo(videoPath:error:observationInfo:)), nil)
+            guard UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoFileURL.path) else { return }
+            UISaveVideoAtPathToSavedPhotosAlbum(videoFileURL.path, self, #selector(self.didFinishSavingVideo(videoPath:error:observationInfo:)), nil)
         } else if mediaType == "public.image" {
             let originImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
             UIImageWriteToSavedPhotosAlbum(originImage, self, #selector(self.didFinishSavingPhoto(image:error:observationInfo:)), nil)
@@ -212,18 +213,30 @@ extension ViewController {
     // - 保存照片到系统相册的监听回调
     @objc func didFinishSavingPhoto(image: UIImage, error: Error?, observationInfo: UnsafeMutableRawPointer) {
         if error != nil {
-            print("保存失败")
+            let alertController = UIAlertController(title: "保存失败: \(error?.localizedDescription ?? "")", message: "", preferredStyle: .alert)
+            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
+            alertController.addAction(action)
+            present(alertController, animated: true, completion: nil)
         } else {
-            print("❤️❤️已保存到系统相册❤️❤️")
+            let alertController = UIAlertController(title: "保存成功", message: "", preferredStyle: .alert)
+            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
+            alertController.addAction(action)
+            present(alertController, animated: true, completion: nil)
         }
     }
     
     // - 保存视频到系统相册的监听回调
     @objc func didFinishSavingVideo(videoPath: String, error: Error?, observationInfo: UnsafeMutableRawPointer) {
         if error != nil {
-            print(error?.localizedDescription)
+            let alertController = UIAlertController(title: "保存失败: \(error?.localizedDescription ?? "")", message: "", preferredStyle: .alert)
+            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
+            alertController.addAction(action)
+            present(alertController, animated: true, completion: nil)
         } else {
-            print("❤️❤️已保存到系统相册❤️❤️")
+            let alertController = UIAlertController(title: "保存成功", message: "", preferredStyle: .alert)
+            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
+            alertController.addAction(action)
+            present(alertController, animated: true, completion: nil)
         }
     }
     
