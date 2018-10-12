@@ -10,10 +10,12 @@ import UIKit
 
 class SimpleImageBrowseViewController: UIViewController {
 
+    // 单图被点击时在屏幕上的位置
+    var portraitCurrentRect = CGRect()
+    // 缩略图
+    lazy var portraitImage = UIImage()
     // 是否是放大状态
     var isZoom: Bool = false
-    // 浏览的大图
-    var photoURLString: String?
     
     lazy var browseScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -46,11 +48,25 @@ class SimpleImageBrowseViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    convenience init(thumbImage: UIImage, photoString: String, animatatedFromView animatedView: UIView) {
+        self.init()
+        loadLargeImageData(largeImageString: photoString)
+        
+        let thumbnailSize = thumbImage.size
+        portraitCurrentRect = animatedView.convert(animatedView.frame, to: view)
+        portraitImage = thumbImage
+        
+        let scale = (thumbnailSize.width / thumbnailSize.height) / (animatedView.bounds.width / animatedView.bounds.height)
+        if scale > 1 { // 宽度被裁切
+            portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x - (scale - 1) * portraitCurrentRect.width / 2 , y: portraitCurrentRect.origin.y, width: portraitCurrentRect.width * scale, height: portraitCurrentRect.height)
+        } else if scale < 1 { // 长度被裁切
+            portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x , y: portraitCurrentRect.origin.y - (scale - 1) * portraitCurrentRect.height / 2 , width: portraitCurrentRect.width, height: portraitCurrentRect.height / scale)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        guard let photoString = photoURLString else { return }
-        loadLargeImageData(largeImageString: photoString)
     }
     
     private func configureUI() {

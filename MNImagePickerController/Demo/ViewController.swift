@@ -171,21 +171,10 @@ extension ViewController: UITableViewDataSource {
 extension ViewController {
     
     @objc func portraitButtonAction(sender: UIButton) {
-        let thumbnailSize = (sender.imageView?.image?.size)!
-        portraitCurrentRect = sender.convert(sender.frame, to: view)
-        let scale = (thumbnailSize.width / thumbnailSize.height) / (sender.bounds.width / sender.bounds.height)
-        if scale > 1 { // 宽度被裁切
-            portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x - (scale - 1) * portraitCurrentRect.width / 2 , y: portraitCurrentRect.origin.y, width: portraitCurrentRect.width * scale, height: portraitCurrentRect.height)
-        } else if scale < 1 { // 长度被裁切
-            portraitCurrentRect = CGRect(x: portraitCurrentRect.origin.x , y: portraitCurrentRect.origin.y - (scale - 1) * portraitCurrentRect.height / 2 , width: portraitCurrentRect.width, height: portraitCurrentRect.height / scale)
-        }
-
-        let controller = SimpleImageBrowseViewController()
+        guard let thumbImage = sender.currentImage else { return }
+        let controller = SimpleImageBrowseViewController(thumbImage: thumbImage, photoString: portraitLarge, animatatedFromView: sender)
         controller.transitioningDelegate = self
-        // 大图 / 缩略图 / 初始位置
-        controller.photoURLString = portraitLarge
-//        controller.loadLargeImageData(largeImageString: portraitLarge)
-        self.present(controller, animated: true, completion: nil)
+        present(controller, animated: true, completion: nil)
     }
     
     @objc func cameraButtonAction(sender: UIButton) {
@@ -238,15 +227,11 @@ extension ViewController:  UIImagePickerControllerDelegate & UINavigationControl
 extension ViewController: UIViewControllerTransitioningDelegate {
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        animator.type = .dismiss
-        return animator
+        return TransitionAnimator(type: .dismiss)
     }
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        animator.type = .modal
-        animator.portraitImage = self.portraitImage
-        animator.portraitCurrentRect = portraitCurrentRect
-        return animator
+        return TransitionAnimator(type: .modal)
     }
 }
 
