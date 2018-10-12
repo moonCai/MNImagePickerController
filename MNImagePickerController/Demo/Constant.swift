@@ -15,3 +15,4 @@ let portraitLarge = "http://qiniu.iwhere.com/FibZ_EWNDP1mjIuBtVcYasALZKnc"
 
 let screenWidth = UIScreen.main.bounds.size.width
 let screenHeight = UIScreen.main.bounds.size.height
+

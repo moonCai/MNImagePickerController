@@ -9,7 +9,7 @@
 import UIKit
 
 class SimpleImageBrowseViewController: UIViewController {
-
+    
     // 单图被点击时在屏幕上的位置
     var portraitCurrentRect = CGRect()
     // 动画来源视图
@@ -236,15 +236,13 @@ extension SimpleImageBrowseViewController {
     // - 保存图片至相册的监听回调
     @objc func didFinishSavingPhoto(image: UIImage, error: Error?, observationInfo: UnsafeMutableRawPointer) {
         if error != nil {
-            let alertController = UIAlertController(title:  "保存失败: \(error?.localizedDescription ?? "")", message: "", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "保存失败: \(error?.localizedDescription ?? "")", message: "", preferredStyle: .alert)
             let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
             alertController.addAction(action)
             present(alertController, animated: true, completion: nil)
         } else {
-            let alertController = UIAlertController(title: "保存成功", message: "", preferredStyle: .alert)
-            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
-            alertController.addAction(action)
-            present(alertController, animated: true, completion: nil)
+            let controller = DisplayViewController()
+            present(controller, animated: true, completion: nil)
         }
     }
     

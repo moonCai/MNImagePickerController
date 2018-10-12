@@ -13,6 +13,9 @@ import AssetsLibrary
 
 class ViewController: UIViewController {
     
+    // 数据源
+    var images: [UIImage] = []
+    
     private lazy var headerView = NewsTableHeaderView()
     private lazy var newsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -218,10 +221,8 @@ extension ViewController {
             alertController.addAction(action)
             present(alertController, animated: true, completion: nil)
         } else {
-            let alertController = UIAlertController(title: "保存成功", message: "", preferredStyle: .alert)
-            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
-            alertController.addAction(action)
-            present(alertController, animated: true, completion: nil)
+            let controller = DisplayViewController()
+            present(controller, animated: true, completion: nil)
         }
     }
     
@@ -233,10 +234,8 @@ extension ViewController {
             alertController.addAction(action)
             present(alertController, animated: true, completion: nil)
         } else {
-            let alertController = UIAlertController(title: "保存成功", message: "", preferredStyle: .alert)
-            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
-            alertController.addAction(action)
-            present(alertController, animated: true, completion: nil)
+            let controller = DisplayViewController()
+            present(controller, animated: true, completion: nil)
         }
     }
     
