@@ -55,8 +55,8 @@ class SimpleImageBrowseViewController: UIViewController {
         loadLargeImageData(largeImageString: photoString)
         
         let thumbnailSize = thumbImage.size
-        portraitCurrentRect = animatedView.convert(animatedView.frame, to: view)
         portraitImage = thumbImage
+        portraitCurrentRect = animatedView.convert(animatedView.frame, to: view)
         animatedFromView = animatedView
         
         let scale = (thumbnailSize.width / thumbnailSize.height) / (animatedView.bounds.width / animatedView.bounds.height)
@@ -71,6 +71,11 @@ class SimpleImageBrowseViewController: UIViewController {
         super.viewDidLoad()
         configureUI()
     }
+    
+}
+
+// MARK: - ConfigureUI
+extension SimpleImageBrowseViewController {
     
     private func configureUI() {
         let oneTap = UITapGestureRecognizer(target: self, action: #selector(oneTapAtion))
@@ -121,36 +126,9 @@ class SimpleImageBrowseViewController: UIViewController {
         }
     }
     
-    @objc func didFinishSavingPhoto(image: UIImage, error: Error?, observationInfo: UnsafeMutableRawPointer) {
-        if error != nil {
-            print("保存失败")
-        } else {
-            print("❤️❤️已保存到系统相册❤️❤️")
-        }
-    }
-    
     func opaqueSubviews() {
         browseScrollView.alpha = 1
         browseImageView.alpha = 1
-    }
-    
-    func loadLargeImageData(largeImageString: String) {
-        guard let imageUrl = URL(string: largeImageString) else { return }
-        indicatorView.startAnimating()
-        URLSession.shared.dataTask(with: imageUrl) { [unowned self] (data, response, error) in
-            DispatchQueue.main.async {
-                self.indicatorView.removeFromSuperview()
-            }
-            if error != nil {
-                print(error?.localizedDescription ?? "加载大图失败")
-            } else if let largeImageData = data {
-                DispatchQueue.main.async {
-                    let largeImage = UIImage(data: largeImageData)
-                    self.browseImageView.image = largeImage
-                    self.updateZoomScale()
-                }
-            }
-            }.resume()
     }
     
     func updateZoomScale() {
@@ -172,6 +150,31 @@ class SimpleImageBrowseViewController: UIViewController {
     
 }
 
+// MARK: - loadLargeImage
+extension SimpleImageBrowseViewController {
+    
+    func loadLargeImageData(largeImageString: String) {
+        guard let imageUrl = URL(string: largeImageString) else { return }
+        indicatorView.startAnimating()
+        URLSession.shared.dataTask(with: imageUrl) { [unowned self] (data, response, error) in
+            DispatchQueue.main.async {
+                self.indicatorView.removeFromSuperview()
+            }
+            if error != nil {
+                print(error?.localizedDescription ?? "加载大图失败")
+            } else if let largeImageData = data {
+                DispatchQueue.main.async {
+                    let largeImage = UIImage(data: largeImageData)
+                    self.browseImageView.image = largeImage
+                    self.updateZoomScale()
+                }
+            }
+            }.resume()
+    }
+    
+}
+
+// MARK: - UIScrollViewDelegate
 extension SimpleImageBrowseViewController: UIScrollViewDelegate {
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
@@ -188,8 +191,10 @@ extension SimpleImageBrowseViewController: UIScrollViewDelegate {
     
 }
 
+// MARK: - Event Response
 extension SimpleImageBrowseViewController {
     
+    // - 单击手势的监听事件
     @objc func oneTapAtion() {
         if isZoom {
             isZoom = false
@@ -199,6 +204,7 @@ extension SimpleImageBrowseViewController {
         }
     }
     
+    //  - 双击手势的监听事件
     @objc func doubleTapAction(recognizer: UITapGestureRecognizer) {
         isZoom = !isZoom
         switch isZoom {
@@ -210,6 +216,7 @@ extension SimpleImageBrowseViewController {
         }
     }
     
+    //  - 长按手势的监听事件
     @objc func longPressGestureAction() {
         dimmingButton.isHidden = false
         UIView.animate(withDuration: 0.25) {
@@ -217,11 +224,21 @@ extension SimpleImageBrowseViewController {
         }
     }
     
+    // - 点击蒙版
     @objc func dimmingButtonAction() {
         UIView.animate(withDuration: 0.25, animations: {
             self.sheetView.transform = .identity
         }) { (_) in
             self.dimmingButton.isHidden = true
+        }
+    }
+    
+    // - 保存图片至相册的监听回调
+    @objc func didFinishSavingPhoto(image: UIImage, error: Error?, observationInfo: UnsafeMutableRawPointer) {
+        if error != nil {
+            print("保存失败")
+        } else {
+            print("❤️❤️已保存到系统相册❤️❤️")
         }
     }
     

@@ -152,58 +152,15 @@ extension ViewController: UITableViewDataSource {
     }
 }
 
-extension ViewController {
-    
-    // 浏览头像
-    @objc func portraitButtonAction(sender: UIButton) {
-        guard let thumbImage = sender.currentImage else { return }
-        let controller = SimpleImageBrowseViewController(thumbImage: thumbImage, photoString: portraitLarge, animatatedFromView: sender)
-        controller.transitioningDelegate = self
-        present(controller, animated: true, completion: nil)
-    }
-    
-    @objc func cameraButtonAction(sender: UIButton) {
-        dimmingButton.isHidden = false
-        UIView.animate(withDuration: 0.25) {
-            self.mediaChooseSheetView.transform = CGAffineTransform(translationX: 0, y: -175)
-        }
-    }
-    
-    @objc func dimmingButtonAction() {
-        UIView.animate(withDuration: 0.25, animations: {
-            self.mediaChooseSheetView.transform = .identity
-        }) { (_) in
-            self.dimmingButton.isHidden = true
-        }
-    }
-    
-    // 保存照片到系统相册的回调
-    @objc func didFinishSavingPhoto(image: UIImage, error: Error?, observationInfo: UnsafeMutableRawPointer) {
-        if error != nil {
-            print("保存失败")
-        } else {
-            print("❤️❤️已保存到系统相册❤️❤️")
-        }
-    }
-    
-    @objc func didFinishSavingVideo(videoPath: String, error: Error?, observationInfo: UnsafeMutableRawPointer) {
-        if error != nil {
-            print("保存失败")
-        } else {
-            print("❤️❤️已保存到系统相册❤️❤️")
-        }
-    }
-    
-}
-
+// MARK: - UIImagePickerControllerDelegate & UINavigationControllerDelegate
 extension ViewController:  UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         picker.dismiss(animated: true, completion: nil)
         guard let mediaType = info["UIImagePickerControllerMediaType"] as? String else { return }
         if mediaType == "public.movie" {
-            guard let videoFileString = info["UIImagePickerControllerMediaURL"] as? String else { return }
-            UISaveVideoAtPathToSavedPhotosAlbum(videoFileString, self, #selector(self.didFinishSavingVideo(videoPath:error:observationInfo:)), nil)
+            guard let videoFileURL = info["UIImagePickerControllerMediaURL"] as? URL else { return }
+            UISaveVideoAtPathToSavedPhotosAlbum(videoFileURL.absoluteString, self, #selector(self.didFinishSavingVideo(videoPath:error:observationInfo:)), nil)
         } else if mediaType == "public.image" {
             let originImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
             UIImageWriteToSavedPhotosAlbum(originImage, self, #selector(self.didFinishSavingPhoto(image:error:observationInfo:)), nil)
@@ -211,6 +168,7 @@ extension ViewController:  UIImagePickerControllerDelegate & UINavigationControl
     }
 }
 
+// MARK: - UIViewControllerTransitioningDelegate
 extension ViewController: UIViewControllerTransitioningDelegate {
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -220,8 +178,55 @@ extension ViewController: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return TransitionAnimator(type: .modal)
     }
+    
 }
 
-
+// MARK: - Event Response
+extension ViewController {
+    
+    // - 浏览头像
+    @objc func portraitButtonAction(sender: UIButton) {
+        guard let thumbImage = sender.currentImage else { return }
+        let controller = SimpleImageBrowseViewController(thumbImage: thumbImage, photoString: portraitLarge, animatatedFromView: sender)
+        controller.transitioningDelegate = self
+        present(controller, animated: true, completion: nil)
+    }
+    
+    // - 点击相机logo
+    @objc func cameraButtonAction(sender: UIButton) {
+        dimmingButton.isHidden = false
+        UIView.animate(withDuration: 0.25) {
+            self.mediaChooseSheetView.transform = CGAffineTransform(translationX: 0, y: -175)
+        }
+    }
+    
+    // - 点击蒙版
+    @objc func dimmingButtonAction() {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.mediaChooseSheetView.transform = .identity
+        }) { (_) in
+            self.dimmingButton.isHidden = true
+        }
+    }
+    
+    // - 保存照片到系统相册的监听回调
+    @objc func didFinishSavingPhoto(image: UIImage, error: Error?, observationInfo: UnsafeMutableRawPointer) {
+        if error != nil {
+            print("保存失败")
+        } else {
+            print("❤️❤️已保存到系统相册❤️❤️")
+        }
+    }
+    
+    // - 保存视频到系统相册的监听回调
+    @objc func didFinishSavingVideo(videoPath: String, error: Error?, observationInfo: UnsafeMutableRawPointer) {
+        if error != nil {
+            print(error?.localizedDescription)
+        } else {
+            print("❤️❤️已保存到系统相册❤️❤️")
+        }
+    }
+    
+}
 
 

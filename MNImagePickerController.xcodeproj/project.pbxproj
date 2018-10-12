@@ -90,11 +90,10 @@
 		7A0876BB212D56A90063701C /* MNImagePickerController */ = {
 			isa = PBXGroup;
 			children = (
-				7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */,
-				7A447D4521350F9400FE754B /* SaveSheetView.swift */,
-				7A798C27215DFA4000619F05 /* MediaChooseSheetView.swift */,
-				7A43F476216F37E4000646C3 /* TransitionAnimator.swift */,
-				7A1FA65B215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift */,
+				7A8C50A821704AE0004256A7 /* KeyClasses */,
+				7A8C50A721704ACB004256A7 /* Tools */,
+				7A8C50A621704AAF004256A7 /* PopUpWindows */,
+				7A8C50A421704A6C004256A7 /* Animation */,
 			);
 			path = MNImagePickerController;
 			sourceTree = "<group>";
@@ -109,6 +108,39 @@
 				7A1CFD3C212E7E0900ECCA5E /* Constant.swift */,
 			);
 			path = Demo;
+			sourceTree = "<group>";
+		};
+		7A8C50A421704A6C004256A7 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				7A43F476216F37E4000646C3 /* TransitionAnimator.swift */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
+		7A8C50A621704AAF004256A7 /* PopUpWindows */ = {
+			isa = PBXGroup;
+			children = (
+				7A798C27215DFA4000619F05 /* MediaChooseSheetView.swift */,
+				7A447D4521350F9400FE754B /* SaveSheetView.swift */,
+			);
+			path = PopUpWindows;
+			sourceTree = "<group>";
+		};
+		7A8C50A721704ACB004256A7 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
+		7A8C50A821704AE0004256A7 /* KeyClasses */ = {
+			isa = PBXGroup;
+			children = (
+				7A1FA65B215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift */,
+			);
+			path = KeyClasses;
 			sourceTree = "<group>";
 		};
 		AFC1EE0916CEE43187166E49 /* Frameworks */ = {
