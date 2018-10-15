@@ -145,7 +145,7 @@ extension ViewController {
 extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -222,6 +222,7 @@ extension ViewController {
             present(alertController, animated: true, completion: nil)
         } else {
             let controller = DisplayViewController()
+            controller.selectedImages.append(image)
             present(controller, animated: true, completion: nil)
         }
     }
