@@ -50,7 +50,7 @@ class DisplayViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 200
+        tableView.estimatedRowHeight = 230
         tableView.register(NewsDetailCell.self, forCellReuseIdentifier: NewsDetailCellID)
         return tableView
     }()

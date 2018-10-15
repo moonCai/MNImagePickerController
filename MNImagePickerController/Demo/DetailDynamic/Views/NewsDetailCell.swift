@@ -72,8 +72,8 @@ class NewsDetailCell: UITableViewCell {
             $0.leading.equalToSuperview().offset(20)
             $0.top.equalTo(desribeTextView.snp.bottom).offset(15)
             $0.trailing.equalToSuperview().offset(-20)
-            $0.height.equalTo(imageCellWH)
-            $0.bottom.equalToSuperview().offset(-15)
+            $0.height.equalTo(imageCellWH + 5)
+            $0.bottom.equalToSuperview().offset(-15).priority(999)
         }
     }
     
@@ -87,7 +87,7 @@ class NewsDetailCell: UITableViewCell {
                 $0.top.equalTo(desribeTextView.snp.bottom).offset(15)
                 $0.trailing.equalToSuperview().offset(-20)
                 $0.height.equalTo(collectionHeight)
-                $0.bottom.equalToSuperview().offset(-15)
+                $0.bottom.equalToSuperview().offset(-15).priority(999)
             }
         case false:
             var rows: CGFloat = 0
@@ -105,8 +105,8 @@ class NewsDetailCell: UITableViewCell {
                 $0.leading.equalToSuperview().offset(20)
                 $0.top.equalTo(desribeTextView.snp.bottom).offset(15)
                 $0.trailing.equalToSuperview().offset(-20)
-                $0.height.equalTo(imageCellWH * rows + 5 * (rows - 1))
-                $0.bottom.equalToSuperview().offset(-15)
+                $0.height.equalTo((imageCellWH + 5) * rows)
+                $0.bottom.equalToSuperview().offset(-15).priority(999)
             }
         }
     }
