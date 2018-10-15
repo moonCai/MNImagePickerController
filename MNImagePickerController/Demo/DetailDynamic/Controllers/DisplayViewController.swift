@@ -9,12 +9,26 @@
 import UIKit
 import MobileCoreServices
 import AssetsLibrary
+import AVFoundation
 
 class DisplayViewController: UIViewController {
     
     var selectedImages: [UIImage] = [] {
         didSet {
             tableView.reloadData()
+        }
+    }
+    
+    var isVideo: Bool = false
+    
+    var selectedVideoPath: String = "" {
+        didSet {
+             let videoURL = URL(fileURLWithPath: selectedVideoPath)
+            let firstFrame = getFirstVideoFrameWith(videoPath: videoURL, size: CGSize(width: screenWidth, height: screenHeight))
+            if firstFrame != nil {
+                selectedImages.append(firstFrame!)
+                isVideo = true
+            }
         }
     }
     
@@ -48,7 +62,7 @@ class DisplayViewController: UIViewController {
         return button
     }()
     lazy var mediaChooseSheetView = MediaChooseSheetView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -88,14 +102,13 @@ extension DisplayViewController {
         mediaChooseSheetView.mediaTypeClosure = { [unowned self] type in
             self.dimmingButtonAction()
             switch type {
-            case .shoot:  // 拍照 / 拍视频
+            case .shoot:  // 拍照
                 if UIImagePickerController.isSourceTypeAvailable(.camera) {
                     let availableMediaTypes = UIImagePickerController.availableMediaTypes(for: .camera)!
                     let imageType = kUTTypeImage as String
-                    let videoType = kUTTypeMovie as String
-                    if availableMediaTypes.contains(imageType), availableMediaTypes.contains(videoType) {
+                    if availableMediaTypes.contains(imageType) {
                         self.pickerController.sourceType = .camera
-                        self.pickerController.mediaTypes = [imageType, videoType]
+                        self.pickerController.mediaTypes = [imageType]
                         self.present(self.pickerController, animated: true, completion: nil)
                     }
                 }
@@ -120,6 +133,7 @@ extension DisplayViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: NewsDetailCellID, for: indexPath) as! NewsDetailCell
+        cell.isVideo = isVideo
         cell.selectedImages = selectedImages
         cell.selectClsoure = { [unowned self] selectedIndex in
             if self.selectedImages.count < 9, selectedIndex == self.selectedImages.count {
@@ -140,22 +154,15 @@ extension DisplayViewController:  UIImagePickerControllerDelegate & UINavigation
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         picker.dismiss(animated: true, completion: nil)
-        guard let mediaType = info["UIImagePickerControllerMediaType"] as? String else { return }
-        if mediaType == "public.movie" {
-            guard let videoFileURL = info["UIImagePickerControllerMediaURL"] as? URL else { return }
-            guard UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoFileURL.path) else { return }
-            UISaveVideoAtPathToSavedPhotosAlbum(videoFileURL.path, self, #selector(self.didFinishSavingVideo(videoPath:error:observationInfo:)), nil)
-        } else if mediaType == "public.image" {
-            let originImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
-            UIImageWriteToSavedPhotosAlbum(originImage, self, #selector(self.didFinishSavingPhoto(image:error:observationInfo:)), nil)
-        }
+        let originImage = info["UIImagePickerControllerOriginalImage"] as! UIImage
+        UIImageWriteToSavedPhotosAlbum(originImage, self, #selector(self.didFinishSavingPhoto(image:error:observationInfo:)), nil)
     }
 }
 
 // MARK: - Event response
 extension DisplayViewController {
     
-     // - 点击取消
+    // - 点击取消
     @objc func dismissButtonAction() {
         dismiss(animated: true, completion: nil)
     }
@@ -180,18 +187,19 @@ extension DisplayViewController {
             selectedImages.append(image)
         }
     }
-    
-    // - 保存视频到系统相册的监听回调
-    @objc func didFinishSavingVideo(videoPath: String, error: Error?, observationInfo: UnsafeMutableRawPointer) {
-        if error != nil {
-            let alertController = UIAlertController(title: "保存失败: \(error?.localizedDescription ?? "")", message: "", preferredStyle: .alert)
-            let action = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
-            alertController.addAction(action)
-            present(alertController, animated: true, completion: nil)
-        } else {
-//            let controller = DisplayViewController()
-//            present(controller, animated: true, completion: nil)
+
+    // - 获取本地视频第一桢
+    func getFirstVideoFrameWith(videoPath: URL, size: CGSize)->UIImage?  {
+        let videoAsset = AVURLAsset(url: videoPath, options: nil)
+        let generator = AVAssetImageGenerator(asset: videoAsset)
+        generator.appliesPreferredTrackTransform = true
+        do {
+            let img = try generator.copyCGImage(at: CMTime(seconds: 0, preferredTimescale: 600), actualTime: nil)
+            return UIImage(cgImage: img)
+        } catch {
+            print(error.localizedDescription)
         }
+        return nil
     }
     
 }

@@ -13,6 +13,8 @@ let ImageCollectionViewCellID = "ImageCollectionViewCellID"
 let imageCellWH: CGFloat = (screenWidth - 50) / 3
 class NewsDetailCell: UITableViewCell {
     
+    var isVideo: Bool = false
+    
     var selectClsoure: ((Int)->())?
     
     // - 数据源
@@ -26,15 +28,14 @@ class NewsDetailCell: UITableViewCell {
     lazy var desribeTextView: PlaceholderTextView = {
         let textView = PlaceholderTextView()
         textView.font = UIFont.systemFont(ofSize: 15)
-         textView.placeLabel.font = UIFont.systemFont(ofSize: 15)
+        textView.placeLabel.font = UIFont.systemFont(ofSize: 15)
         textView.textColor = .darkGray
         textView.placeLabel.text = "这一刻的想法.."
         textView.delegate = self
         return textView
     }()
-    
+    lazy var flowLayout = UICollectionViewFlowLayout()
     lazy var collectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
         flowLayout.itemSize = CGSize(width: imageCellWH, height: imageCellWH)
         flowLayout.minimumInteritemSpacing = 5
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
@@ -44,7 +45,7 @@ class NewsDetailCell: UITableViewCell {
         collectionView.backgroundColor = .white
         return collectionView
     }()
-
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: NewsDetailCellID)
         configureUI()
@@ -77,44 +78,69 @@ class NewsDetailCell: UITableViewCell {
     }
     
     func updateCollectionViewHeightWithImages(count: Int) {
-        var rows: CGFloat = 0
-        switch count {
-        case  0 ..< 3:
-            rows = 1
-        case  3 ..< 6:
-            rows = 2
-        case  6 ... 9:
-            rows = 3
-        default:
-            print(count)
-        }
-        collectionView.snp.remakeConstraints {
-            $0.leading.equalToSuperview().offset(20)
-            $0.top.equalTo(desribeTextView.snp.bottom).offset(15)
-            $0.trailing.equalToSuperview().offset(-20)
-            $0.height.equalTo(imageCellWH * rows + 5 * (rows - 1))
-            $0.bottom.equalToSuperview().offset(-15)
+        switch isVideo {
+        case true:
+            let collectionHeight = screenHeight * imageCellWH / screenWidth
+            flowLayout.itemSize = CGSize(width: imageCellWH, height: collectionHeight)
+            collectionView.snp.remakeConstraints {
+                $0.leading.equalToSuperview().offset(20)
+                $0.top.equalTo(desribeTextView.snp.bottom).offset(15)
+                $0.trailing.equalToSuperview().offset(-20)
+                $0.height.equalTo(collectionHeight)
+                $0.bottom.equalToSuperview().offset(-15)
+            }
+        case false:
+            var rows: CGFloat = 0
+            switch count {
+            case  0 ..< 3:
+                rows = 1
+            case  3 ..< 6:
+                rows = 2
+            case  6 ... 9:
+                rows = 3
+            default:
+                print(count)
+            }
+            collectionView.snp.remakeConstraints {
+                $0.leading.equalToSuperview().offset(20)
+                $0.top.equalTo(desribeTextView.snp.bottom).offset(15)
+                $0.trailing.equalToSuperview().offset(-20)
+                $0.height.equalTo(imageCellWH * rows + 5 * (rows - 1))
+                $0.bottom.equalToSuperview().offset(-15)
+            }
         }
     }
-
+    
 }
 
 // MARK: - UICollectionViewDataSource
 extension NewsDetailCell: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return selectedImages.count < 9 ? selectedImages.count + 1 : 9
+        switch isVideo {
+        case true:
+            return 1
+        case false:
+            return selectedImages.count < 9 ? selectedImages.count + 1 : 9
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCellID, for: indexPath) as! ImageCollectionViewCell
-        if selectedImages.count < 9, indexPath.item == selectedImages.count {
-            cell.displayImageView.image = UIImage(named: "cameraIcon")
-        } else {
-              cell.displayImageView.image = selectedImages[indexPath.item]
+        switch isVideo {
+        case true:
+            cell.displayImageView.image = selectedImages.first
+            cell.playImageView.isHidden = false
+        case false:
+            if selectedImages.count < 9, indexPath.item == selectedImages.count {
+                cell.displayImageView.image = UIImage(named: "cameraIcon")
+            } else {
+                cell.displayImageView.image = selectedImages[indexPath.item]
+            }
         }
         return cell
     }
+    
 }
 
 extension NewsDetailCell: UICollectionViewDelegate {

@@ -236,6 +236,7 @@ extension ViewController {
             present(alertController, animated: true, completion: nil)
         } else {
             let controller = DisplayViewController()
+            controller.selectedVideoPath = videoPath
             present(controller, animated: true, completion: nil)
         }
     }
