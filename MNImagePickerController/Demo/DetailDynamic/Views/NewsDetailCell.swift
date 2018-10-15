@@ -13,10 +13,6 @@ let ImageCollectionViewCellID = "ImageCollectionViewCellID"
 let imageCellWH: CGFloat = (screenWidth - 50) / 3
 class NewsDetailCell: UITableViewCell {
     
-    var isVideo: Bool = false
-    
-    var selectClsoure: ((Int)->())?
-    
     // - 数据源
     var selectedImages: [UIImage] = [] {
         didSet {
@@ -24,6 +20,8 @@ class NewsDetailCell: UITableViewCell {
             updateCollectionViewHeightWithImages(count: selectedImages.count)
         }
     }
+    var isVideo: Bool = false
+    var selectClsoure: ((Int)->())?
     
     lazy var desribeTextView: PlaceholderTextView = {
         let textView = PlaceholderTextView()
@@ -54,6 +52,11 @@ class NewsDetailCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+}
+
+// MARK: - ConfigureUI
+extension NewsDetailCell {
     
     func configureUI() {
         selectionStyle = .none
@@ -143,6 +146,7 @@ extension NewsDetailCell: UICollectionViewDataSource {
     
 }
 
+// MARK: - UICollectionViewDelegate
 extension NewsDetailCell: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
