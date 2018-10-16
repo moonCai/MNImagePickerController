@@ -26,6 +26,7 @@ class MutiplePhotoAlbumController: UIViewController {
         collectionView.backgroundColor = .white
         collectionView.register(MutipleImageCell.self, forCellWithReuseIdentifier: MutipleImageCellID)
         collectionView.dataSource = self
+        collectionView.delegate = self
         return collectionView
     }()
     
@@ -72,6 +73,9 @@ extension MutiplePhotoAlbumController {
                 })
                 // - 刷新页面
                 self.collectionView.reloadData()
+                // - 只有目标cell是可视的,直接调用滚动到指定cell的方法才有效. 否则需要先更新视图布局
+                self.collectionView.layoutIfNeeded()
+                self.collectionView.scrollToItem(at: IndexPath(row: self.rollAssets.count - 1, section: 0), at: .bottom, animated: false)
             }
         }
     }
@@ -92,6 +96,11 @@ extension MutiplePhotoAlbumController: UICollectionViewDataSource {
         }
         return cell
     }
+}
+
+// MARK: - UICollectionViewDelegate
+extension MutiplePhotoAlbumController: UICollectionViewDelegate {
+    
 }
 
 // MARK: - Event Response
