@@ -114,7 +114,8 @@ extension DisplayViewController {
                 }
             case .album: // 从相册选择
                 let controller = MutiplePhotoAlbumController()
-                self.present(controller, animated: true, completion: nil)
+                let navigationController = UINavigationController(rootViewController: controller)
+                self.present(navigationController, animated: true, completion: nil)
             case .cancel:
                 print("取消")
             }

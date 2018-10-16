@@ -8,15 +8,16 @@
 
 import UIKit
 
-let mutipleImageWH: CGFloat = (screenWidth - 3) / 4
+let mutipleImageWH: CGFloat = (screenWidth - 25) / 4
 let MutipleImageCellID = "MutipleImageCellID"
 class MutiplePhotoAlbumController: UIViewController {
     
     lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.sectionInset = UIEdgeInsetsMake(0, 5, 0, 5)
         flowLayout.itemSize = CGSize(width: mutipleImageWH, height: mutipleImageWH)
-        flowLayout.minimumLineSpacing = 1
-        flowLayout.minimumInteritemSpacing = 1
+        flowLayout.minimumLineSpacing = 5
+        flowLayout.minimumInteritemSpacing = 5
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.backgroundColor = .white
         collectionView.register(MutipleImageCell.self, forCellWithReuseIdentifier: MutipleImageCellID)
@@ -58,7 +59,7 @@ extension MutiplePhotoAlbumController {
 extension MutiplePhotoAlbumController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 100
+        return 120
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -70,10 +71,12 @@ extension MutiplePhotoAlbumController: UICollectionViewDataSource {
 // MARK: - Event Response
 extension MutiplePhotoAlbumController {
     
+    // - 点击返回
     @objc func backBarItemAction() {
         print("返回相册分组")
     }
     
+    // - 点击取消
     @objc func dismissBarItemAction() {
         dismiss(animated: true, completion: nil)
     }
