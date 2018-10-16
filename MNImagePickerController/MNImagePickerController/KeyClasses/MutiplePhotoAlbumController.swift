@@ -7,10 +7,14 @@
 //
 
 import UIKit
+import Photos
 
 let mutipleImageWH: CGFloat = (screenWidth - 25) / 4
 let MutipleImageCellID = "MutipleImageCellID"
 class MutiplePhotoAlbumController: UIViewController {
+    
+    // - 数据源
+    lazy var rollAssets: [PHAsset] = []
     
     lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -28,6 +32,7 @@ class MutiplePhotoAlbumController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        configureCustomPhotoAlbum()
     }
     
 }
@@ -53,17 +58,38 @@ extension MutiplePhotoAlbumController {
         }
     }
     
+    // - 获取相册 / 相册数组
+    func configureCustomPhotoAlbum() {
+        // - 获取相册 / 相册数组
+        let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
+
+        // - 获取相机胶圈这个相册
+        smartAlbums.enumerateObjects { (assetCollection, index, _) in
+            if assetCollection.assetCollectionSubtype == .smartAlbumUserLibrary {
+                let assets = PHAsset.fetchAssets(in: assetCollection, options: PHFetchOptions())
+                assets.enumerateObjects({ (asset, index, _) in
+                    self.rollAssets.append(asset)
+                })
+                // - 刷新页面
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
 }
 
 // MARK: - UICollectionViewDataSource
 extension MutiplePhotoAlbumController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 120
+        return rollAssets.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MutipleImageCellID, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MutipleImageCellID, for: indexPath) as! MutipleImageCell
+        if rollAssets.count > 0 {
+          cell.setCellInfoWith(asset: rollAssets[indexPath.row])
+        }
         return cell
     }
 }

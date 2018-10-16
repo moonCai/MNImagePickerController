@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import Photos
 
 class MutipleImageCell: UICollectionViewCell {
     
     lazy var displayImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .yellow
+        imageView.clipsToBounds = true
         return imageView
     }()
     lazy var selectButton: UIButton = {
@@ -22,6 +23,12 @@ class MutipleImageCell: UICollectionViewCell {
         button.setImage(UIImage(named: "selected"), for: .selected)
         button.addTarget(self, action: #selector(selectButtonAction(sender:)), for: .touchUpInside)
         return button
+    }()
+    var timeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = .white
+        return label
     }()
     
     override init(frame: CGRect) {
@@ -33,9 +40,15 @@ class MutipleImageCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+}
+
+// MARK: - ConfigureUI
+extension MutipleImageCell {
+    
     func configureUI() {
         contentView.addSubview(displayImageView)
         contentView.addSubview(selectButton)
+        contentView.addSubview(timeLabel)
         
         displayImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -45,7 +58,40 @@ class MutipleImageCell: UICollectionViewCell {
             $0.trailing.equalToSuperview().offset(-2)
             $0.size.equalTo(CGSize(width: 25, height: 25))
         }
+        timeLabel.snp.makeConstraints {
+            $0.bottom.trailing.equalToSuperview().offset(-5)
+        }
     }
+    
+    func setCellInfoWith(asset: PHAsset) {
+        timeLabel.isHidden = asset.mediaType == .image
+        // - 显示视频时长
+        if asset.mediaType == .video {
+            let formatter = DateComponentsFormatter()
+            if asset.duration < 3600 {
+                 formatter.allowedUnits = [.minute, .second]
+            } else {
+                 formatter.allowedUnits = [.hour, .minute, .second]
+            }
+            formatter.zeroFormattingBehavior = .pad
+            timeLabel.text = formatter.string(from: round(asset.duration))
+        }
+        // - 设置图片 / 视频封面
+        let options = PHImageRequestOptions()
+        options.version = .unadjusted
+        PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: mutipleImageWH, height: mutipleImageWH), contentMode: .aspectFill, options: options) { (image, info) in
+            if let coverImage = image {
+                self.displayImageView.image = coverImage
+            } else {
+                self.displayImageView.image = UIImage.createImageByColor(color: UIColor(white: 0.95, alpha: 1.0))
+            }
+        }
+    }
+    
+}
+
+// MARK: - Event Response
+extension MutipleImageCell {
     
     @objc func selectButtonAction(sender: UIButton) {
         sender.isSelected = !sender.isSelected
