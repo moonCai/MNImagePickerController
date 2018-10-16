@@ -106,7 +106,12 @@ extension ViewController {
                     }
                 }
             case .album: // 从相册选择
-                print("从相册选择")
+                
+                let controller = MutiplePhotoAlbumController()
+                 let navigationController = UINavigationController(rootViewController: controller)
+                self.present(navigationController, animated: true, completion: nil)
+//                self.pickerController.sourceType = .photoLibrary
+//                self.present(self.pickerController, animated: true, completion: nil)
             case .cancel:
                 print("取消")
             }

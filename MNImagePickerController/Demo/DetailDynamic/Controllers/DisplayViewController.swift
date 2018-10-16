@@ -113,7 +113,8 @@ extension DisplayViewController {
                     }
                 }
             case .album: // 从相册选择
-                print("从相册选择")
+                let controller = MutiplePhotoAlbumController()
+                self.present(controller, animated: true, completion: nil)
             case .cancel:
                 print("取消")
             }

@@ -16,6 +16,8 @@
 		7A1CFD37212E476A00ECCA5E /* NewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */; };
 		7A1CFD3D212E7E0900ECCA5E /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFD3C212E7E0900ECCA5E /* Constant.swift */; };
 		7A1FA65C215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1FA65B215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift */; };
+		7A22228121757ACF00261D4C /* MutiplePhotoAlbumController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A22228021757ACF00261D4C /* MutiplePhotoAlbumController.swift */; };
+		7A22228321757EFA00261D4C /* MutipleImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A22228221757EFA00261D4C /* MutipleImageCell.swift */; };
 		7A43F477216F37E4000646C3 /* TransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A43F476216F37E4000646C3 /* TransitionAnimator.swift */; };
 		7A447D4621350F9400FE754B /* SaveSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A447D4521350F9400FE754B /* SaveSheetView.swift */; };
 		7A689E4E212D5F7500325D50 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */; };
@@ -41,6 +43,8 @@
 		7A1CFD36212E476A00ECCA5E /* NewsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTableViewCell.swift; sourceTree = "<group>"; };
 		7A1CFD3C212E7E0900ECCA5E /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		7A1FA65B215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleImageBrowseViewController.swift; sourceTree = "<group>"; };
+		7A22228021757ACF00261D4C /* MutiplePhotoAlbumController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutiplePhotoAlbumController.swift; sourceTree = "<group>"; };
+		7A22228221757EFA00261D4C /* MutipleImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutipleImageCell.swift; sourceTree = "<group>"; };
 		7A43F476216F37E4000646C3 /* TransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionAnimator.swift; sourceTree = "<group>"; };
 		7A447D4521350F9400FE754B /* SaveSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveSheetView.swift; sourceTree = "<group>"; };
 		7A689E4D212D5F7500325D50 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
@@ -147,6 +151,8 @@
 			isa = PBXGroup;
 			children = (
 				7A1FA65B215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift */,
+				7A22228021757ACF00261D4C /* MutiplePhotoAlbumController.swift */,
+				7A22228221757EFA00261D4C /* MutipleImageCell.swift */,
 			);
 			path = KeyClasses;
 			sourceTree = "<group>";
@@ -336,10 +342,12 @@
 				7A798C28215DFA4000619F05 /* MediaChooseSheetView.swift in Sources */,
 				7A8C50B421708924004256A7 /* ImageCollectionViewCell.swift in Sources */,
 				7A1FA65C215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift in Sources */,
+				7A22228321757EFA00261D4C /* MutipleImageCell.swift in Sources */,
 				7A8C50B221707085004256A7 /* NewsDetailCell.swift in Sources */,
 				7A8C50AA21706E4C004256A7 /* DisplayViewController.swift in Sources */,
 				7A447D4621350F9400FE754B /* SaveSheetView.swift in Sources */,
 				7A689E4E212D5F7500325D50 /* UIImage+Extension.swift in Sources */,
+				7A22228121757ACF00261D4C /* MutiplePhotoAlbumController.swift in Sources */,
 				7A1CFD35212E426600ECCA5E /* NewsTableHeaderView.swift in Sources */,
 				7A43F477216F37E4000646C3 /* TransitionAnimator.swift in Sources */,
 				7A1CFD37212E476A00ECCA5E /* NewsTableViewCell.swift in Sources */,
