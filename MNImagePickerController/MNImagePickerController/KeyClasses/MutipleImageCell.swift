@@ -11,6 +11,13 @@ import Photos
 
 class MutipleImageCell: UICollectionViewCell {
     
+    // 数据源
+    var imageModel = DisplayImageModel() {
+        didSet {
+            setCellInfoWith(model: imageModel)
+        }
+    }
+    
     lazy var displayImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -63,25 +70,27 @@ extension MutipleImageCell {
         }
     }
     
-    func setCellInfoWith(asset: PHAsset) {
-        timeLabel.isHidden = asset.mediaType == .image
+    func setCellInfoWith(model: DisplayImageModel) {
+        timeLabel.isHidden = model.asset.mediaType == .image
+        selectButton.isSelected = imageModel.isSelected
         // - 显示视频时长
-        if asset.mediaType == .video {
+        if model.asset.mediaType == .video {
             let formatter = DateComponentsFormatter()
-            if asset.duration < 3600 {
+            if model.asset.duration < 3600 {
                  formatter.allowedUnits = [.minute, .second]
             } else {
                  formatter.allowedUnits = [.hour, .minute, .second]
             }
             formatter.zeroFormattingBehavior = .pad
-            timeLabel.text = formatter.string(from: round(asset.duration))
+            timeLabel.text = formatter.string(from: round(model.asset.duration))
         }
         // - 设置图片 / 视频封面
         let options = PHImageRequestOptions()
         options.version = .unadjusted
-        PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: mutipleImageWH, height: mutipleImageWH), contentMode: .aspectFill, options: options) { (image, info) in
+        PHImageManager.default().requestImage(for: model.asset, targetSize: CGSize(width: mutipleImageWH, height: mutipleImageWH), contentMode: .aspectFill, options: options) { (image, info) in
             if let coverImage = image {
                 self.displayImageView.image = coverImage
+                self.imageModel.image = coverImage
             } else {
                 self.displayImageView.image = UIImage.createImageByColor(color: UIColor(white: 0.95, alpha: 1.0))
             }
@@ -95,6 +104,7 @@ extension MutipleImageCell {
     
     @objc func selectButtonAction(sender: UIButton) {
         sender.isSelected = !sender.isSelected
+        imageModel.isSelected = sender.isSelected
     }
     
 }

@@ -14,7 +14,7 @@ let MutipleImageCellID = "MutipleImageCellID"
 class MutiplePhotoAlbumController: UIViewController {
     
     // - 数据源
-    lazy var rollAssets: [PHAsset] = []
+    lazy var rollImageModels: [DisplayImageModel] = []
     
     lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -69,13 +69,13 @@ extension MutiplePhotoAlbumController {
             if assetCollection.assetCollectionSubtype == .smartAlbumUserLibrary {
                 let assets = PHAsset.fetchAssets(in: assetCollection, options: PHFetchOptions())
                 assets.enumerateObjects({ (asset, index, _) in
-                    self.rollAssets.append(asset)
+                    self.rollImageModels.append(DisplayImageModel(asset: asset))
                 })
                 // - 刷新页面
                 self.collectionView.reloadData()
                 // - 只有目标cell是可视的,直接调用滚动到指定cell的方法才有效. 否则需要先更新视图布局
                 self.collectionView.layoutIfNeeded()
-                self.collectionView.scrollToItem(at: IndexPath(row: self.rollAssets.count - 1, section: 0), at: .bottom, animated: false)
+                self.collectionView.scrollToItem(at: IndexPath(row: self.rollImageModels.count - 1, section: 0), at: .bottom, animated: false)
             }
         }
     }
@@ -86,14 +86,12 @@ extension MutiplePhotoAlbumController {
 extension MutiplePhotoAlbumController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return rollAssets.count
+        return rollImageModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MutipleImageCellID, for: indexPath) as! MutipleImageCell
-        if rollAssets.count > 0 {
-          cell.setCellInfoWith(asset: rollAssets[indexPath.row])
-        }
+        cell.imageModel = rollImageModels[indexPath.row]
         return cell
     }
 }
