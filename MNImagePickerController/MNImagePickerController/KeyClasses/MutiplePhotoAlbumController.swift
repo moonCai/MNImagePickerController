@@ -99,6 +99,12 @@ extension MutiplePhotoAlbumController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension MutiplePhotoAlbumController: UICollectionViewDelegate {
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath)
+        let controller = MutipleImagesBrowserController()
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
 }
 
 // MARK: - Event Response
@@ -106,7 +112,8 @@ extension MutiplePhotoAlbumController {
     
     // - 点击返回
     @objc func backBarItemAction() {
-        print("返回相册分组")
+        let controller = AlbumsViewController()
+        navigationController?.pushViewController(controller, animated: true)
     }
     
     // - 点击取消
