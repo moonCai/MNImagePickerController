@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import Photos
 
 class DisplayAlbumsModel: NSObject {
     // 封面
     var coverImage = UIImage(named: "placeHolder")
     // 相册名
     var albumsName: String = ""
-    // 图片张数
-    var imagesCount: Int = 0
+    // 相册内所有图片资产
+    var albumAssets: [PHAsset] = []
 }

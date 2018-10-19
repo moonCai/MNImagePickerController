@@ -59,7 +59,7 @@ extension MutiplePhotoAlbumController {
         }
     }
     
-    // - 获取相册 / 相册数组
+    // - 配置胶卷相册视图
     func configureCustomPhotoAlbum() {
         // - 获取相册 / 相册数组
         let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)

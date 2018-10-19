@@ -78,6 +78,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F9555DE217997B000F28F7D /* SingleImageBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				7A1FA65B215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift */,
+			);
+			path = SingleImageBrowser;
+			sourceTree = "<group>";
+		};
+		6F9555DF217997DB00F28F7D /* MutipleImageBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				7A6A1AA921782B6F00F004F1 /* MutipleImagesBrowserController.swift */,
+				7A22228221757EFA00261D4C /* MutipleImageCell.swift */,
+				7A2579A421770B55001D2C6F /* DisplayImageModel.swift */,
+			);
+			path = MutipleImageBrowser;
+			sourceTree = "<group>";
+		};
 		7A08769C212D50F80063701C = {
 			isa = PBXGroup;
 			children = (
@@ -160,13 +178,11 @@
 		7A8C50A821704AE0004256A7 /* KeyClasses */ = {
 			isa = PBXGroup;
 			children = (
-				7A1FA65B215DC9EE00F37BBD /* SimpleImageBrowseViewController.swift */,
-				7A6A1AA921782B6F00F004F1 /* MutipleImagesBrowserController.swift */,
+				6F9555DF217997DB00F28F7D /* MutipleImageBrowser */,
+				6F9555DE217997B000F28F7D /* SingleImageBrowser */,
 				7A22228021757ACF00261D4C /* MutiplePhotoAlbumController.swift */,
 				7A6A1AAB21782C2600F004F1 /* AlbumsViewController.swift */,
 				7A6A1AAD21784F4000F004F1 /* AlbumsCell.swift */,
-				7A22228221757EFA00261D4C /* MutipleImageCell.swift */,
-				7A2579A421770B55001D2C6F /* DisplayImageModel.swift */,
 				6F9555DC21797C3300F28F7D /* DisplayAlbumsModel.swift */,
 			);
 			path = KeyClasses;

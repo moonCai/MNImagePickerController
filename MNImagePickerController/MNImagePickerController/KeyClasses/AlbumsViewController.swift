@@ -21,13 +21,13 @@ class AlbumsViewController: UIViewController {
         tableView.rowHeight = 60
         return tableView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
         configureCustomPhotoAlbum()
     }
-
+    
 }
 
 // MARK: - ConfigureUI
@@ -44,29 +44,20 @@ extension AlbumsViewController {
         }
     }
     
-}
-
-extension AlbumsViewController {
-    
     // - 获取相册 / 相册数组
     func configureCustomPhotoAlbum() {
-        // - 获取相册 / 相册数组
         let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
-        print(smartAlbums.count)
         
         smartAlbums.enumerateObjects { (assetCollection, index, _) in
             // - 获取所有可视相册
             if assetCollection.isKind(of: PHAssetCollection.self), assetCollection.assetCollectionSubtype != .smartAlbumAllHidden {
-                
-              let assets = PHAsset.fetchAssets(in: assetCollection, options: nil)
+                let assets = PHAsset.fetchAssets(in: assetCollection, options: nil)
                 let albumsModel = DisplayAlbumsModel()
-                albumsModel.imagesCount = assets.count
                 albumsModel.albumsName = assetCollection.localizedTitle ?? ""
-                if assets.count > 0 {
-                    PHImageManager.default().requestImage(for: assets.lastObject!, targetSize: CGSize(width: 60 * UIScreen.main.scale, height: 60 * UIScreen.main.scale), contentMode: .aspectFill, options: nil, resultHandler: { (lastImage, _) in
-                        albumsModel.coverImage = lastImage!
-                    })
-                }
+                assets.enumerateObjects({ (asset, index, _) in
+                    albumsModel.albumAssets.append(asset)
+                })
+          
                 self.albums.append(albumsModel)
             }
         }
@@ -75,6 +66,7 @@ extension AlbumsViewController {
     
 }
 
+// MARK: - UITableViewDataSource
 extension AlbumsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

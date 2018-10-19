@@ -7,16 +7,17 @@
 //
 
 import UIKit
+import Photos
 
 let AlbumsCellID = "AlbumsCellID"
 class AlbumsCell: UITableViewCell {
     
     var albumModel = DisplayAlbumsModel() {
         didSet {
-          setCellInfoWith(model: albumModel)
+            setCellInfoWith(model: albumModel)
         }
     }
-
+    
     lazy var coverImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "placeHolder")
@@ -26,14 +27,12 @@ class AlbumsCell: UITableViewCell {
     }()
     lazy var titleLable: UILabel = {
         let label = UILabel()
-        label.text = "全景照片"
         label.textColor = .black
         label.font = UIFont.boldSystemFont(ofSize: 17)
         return label
     }()
     lazy var countLabel: UILabel = {
         let label = UILabel()
-        label.text = "(666)"
         label.textColor = .darkGray
         label.font = UIFont.systemFont(ofSize: 16)
         return label
@@ -53,6 +52,11 @@ class AlbumsCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+}
+
+// MARK: - ConfigureUI
+extension AlbumsCell {
     
     func configureUI() {
         selectionStyle = .none
@@ -82,11 +86,22 @@ class AlbumsCell: UITableViewCell {
     func setCellInfoWith(model: DisplayAlbumsModel) {
         coverImageView.image = model.coverImage
         titleLable.text = model.albumsName
-        countLabel.text = "(\(model.imagesCount))"
+        countLabel.text = "(\(model.albumAssets.count))"
+        
+        if let lastAsset = model.albumAssets.last {
+            PHImageManager.default().requestImage(for: lastAsset, targetSize: CGSize(width: 60 * UIScreen.main.scale, height: 60 * UIScreen.main.scale), contentMode: .aspectFill, options: nil, resultHandler: { [unowned self](lastImage, _) in
+                self.coverImageView.image = lastImage!
+            })
+        }
     }
+    
+}
+
+// MARK: - Event Response
+extension AlbumsCell {
     
     @objc func rightArrowButtonAction() {
         print("进入相册详情")
     }
-
+    
 }
