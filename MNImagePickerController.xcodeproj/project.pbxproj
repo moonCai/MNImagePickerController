@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F9555DD21797C3300F28F7D /* DisplayAlbumsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9555DC21797C3300F28F7D /* DisplayAlbumsModel.swift */; };
 		7A0876A9212D50F80063701C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0876A8212D50F80063701C /* AppDelegate.swift */; };
 		7A0876AB212D50F80063701C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0876AA212D50F80063701C /* ViewController.swift */; };
 		7A0876AE212D50F80063701C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A0876AC212D50F80063701C /* Main.storyboard */; };
@@ -36,6 +37,7 @@
 /* Begin PBXFileReference section */
 		3B28DA693627C15C84087431 /* Pods-MNImagePickerController.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MNImagePickerController.release.xcconfig"; path = "Pods/Target Support Files/Pods-MNImagePickerController/Pods-MNImagePickerController.release.xcconfig"; sourceTree = "<group>"; };
 		6EC68FC91B83FFE15C3B04EA /* Pods-MNImagePickerController.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MNImagePickerController.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MNImagePickerController/Pods-MNImagePickerController.debug.xcconfig"; sourceTree = "<group>"; };
+		6F9555DC21797C3300F28F7D /* DisplayAlbumsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayAlbumsModel.swift; sourceTree = "<group>"; };
 		7A0876A5212D50F80063701C /* MNImagePickerController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MNImagePickerController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A0876A8212D50F80063701C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7A0876AA212D50F80063701C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				7A6A1AAD21784F4000F004F1 /* AlbumsCell.swift */,
 				7A22228221757EFA00261D4C /* MutipleImageCell.swift */,
 				7A2579A421770B55001D2C6F /* DisplayImageModel.swift */,
+				6F9555DC21797C3300F28F7D /* DisplayAlbumsModel.swift */,
 			);
 			path = KeyClasses;
 			sourceTree = "<group>";
@@ -366,6 +369,7 @@
 				7A43F477216F37E4000646C3 /* TransitionAnimator.swift in Sources */,
 				7A1CFD37212E476A00ECCA5E /* NewsTableViewCell.swift in Sources */,
 				7A6A1AAE21784F4000F004F1 /* AlbumsCell.swift in Sources */,
+				6F9555DD21797C3300F28F7D /* DisplayAlbumsModel.swift in Sources */,
 				7A0876AB212D50F80063701C /* ViewController.swift in Sources */,
 				7A0876A9212D50F80063701C /* AppDelegate.swift in Sources */,
 				7A8C50B621708D60004256A7 /* PlaceholderTextView.swift in Sources */,

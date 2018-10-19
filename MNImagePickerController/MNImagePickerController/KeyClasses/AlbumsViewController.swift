@@ -7,8 +7,12 @@
 //
 
 import UIKit
+import Photos
 
 class AlbumsViewController: UIViewController {
+    
+    // - 数据源
+    var albums: [DisplayAlbumsModel] = []
     
     lazy var albumsTableView: UITableView = {
         let tableView = UITableView()
@@ -21,6 +25,7 @@ class AlbumsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        configureCustomPhotoAlbum()
     }
 
 }
@@ -29,7 +34,7 @@ class AlbumsViewController: UIViewController {
 extension AlbumsViewController {
     
     func configureUI() {
-        title = "相册"
+        title = "照片"
         
         view.addSubview(albumsTableView)
         albumsTableView.snp.makeConstraints {
@@ -41,14 +46,44 @@ extension AlbumsViewController {
     
 }
 
+extension AlbumsViewController {
+    
+    // - 获取相册 / 相册数组
+    func configureCustomPhotoAlbum() {
+        // - 获取相册 / 相册数组
+        let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
+        print(smartAlbums.count)
+        
+        smartAlbums.enumerateObjects { (assetCollection, index, _) in
+            // - 获取所有可视相册
+            if assetCollection.isKind(of: PHAssetCollection.self), assetCollection.assetCollectionSubtype != .smartAlbumAllHidden {
+                
+              let assets = PHAsset.fetchAssets(in: assetCollection, options: nil)
+                let albumsModel = DisplayAlbumsModel()
+                albumsModel.imagesCount = assets.count
+                albumsModel.albumsName = assetCollection.localizedTitle ?? ""
+                if assets.count > 0 {
+                    PHImageManager.default().requestImage(for: assets.lastObject!, targetSize: CGSize(width: 60 * UIScreen.main.scale, height: 60 * UIScreen.main.scale), contentMode: .aspectFill, options: nil, resultHandler: { (lastImage, _) in
+                        albumsModel.coverImage = lastImage!
+                    })
+                }
+                self.albums.append(albumsModel)
+            }
+        }
+        albumsTableView.reloadData()
+    }
+    
+}
+
 extension AlbumsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 30
+        return albums.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: AlbumsCellID, for: indexPath) as! AlbumsCell
+        cell.albumModel = albums[indexPath.row]
         return cell
     }
 }

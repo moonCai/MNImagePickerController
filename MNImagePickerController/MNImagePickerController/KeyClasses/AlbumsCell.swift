@@ -10,6 +10,12 @@ import UIKit
 
 let AlbumsCellID = "AlbumsCellID"
 class AlbumsCell: UITableViewCell {
+    
+    var albumModel = DisplayAlbumsModel() {
+        didSet {
+          setCellInfoWith(model: albumModel)
+        }
+    }
 
     lazy var coverImageView: UIImageView = {
         let imageView = UIImageView()
@@ -49,6 +55,7 @@ class AlbumsCell: UITableViewCell {
     }
     
     func configureUI() {
+        selectionStyle = .none
         contentView.addSubview(coverImageView)
         contentView.addSubview(titleLable)
         contentView.addSubview(countLabel)
@@ -70,6 +77,12 @@ class AlbumsCell: UITableViewCell {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-20)
         }
+    }
+    
+    func setCellInfoWith(model: DisplayAlbumsModel) {
+        coverImageView.image = model.coverImage
+        titleLable.text = model.albumsName
+        countLabel.text = "(\(model.imagesCount))"
     }
     
     @objc func rightArrowButtonAction() {

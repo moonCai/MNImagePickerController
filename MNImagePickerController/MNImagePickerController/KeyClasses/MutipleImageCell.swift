@@ -87,7 +87,7 @@ extension MutipleImageCell {
         // - 设置图片 / 视频封面
         let options = PHImageRequestOptions()
         options.version = .unadjusted
-        PHImageManager.default().requestImage(for: model.asset, targetSize: CGSize(width: mutipleImageWH, height: mutipleImageWH), contentMode: .aspectFill, options: options) { (image, info) in
+        PHImageManager.default().requestImage(for: model.asset, targetSize: CGSize(width: mutipleImageWH * UIScreen.main.scale, height: mutipleImageWH * UIScreen.main.scale), contentMode: .aspectFill, options: options) { (image, info) in
             if let coverImage = image {
                 self.displayImageView.image = coverImage
                 self.imageModel.image = coverImage
