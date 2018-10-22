@@ -106,8 +106,9 @@ extension ViewController {
                     }
                 }
             case .album: // 从相册选择
-                let controller = MutiplePhotoAlbumController()
+                let controller = AlbumsViewController()
                 let navigationController = UINavigationController(rootViewController: controller)
+            navigationController.pushViewController(MutiplePhotoAlbumController(), animated: false)
                 self.present(navigationController, animated: true, completion: nil)
             case .cancel:
                 print("取消")

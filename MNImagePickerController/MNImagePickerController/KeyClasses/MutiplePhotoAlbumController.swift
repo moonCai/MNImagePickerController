@@ -63,7 +63,7 @@ extension MutiplePhotoAlbumController {
     func configureCustomPhotoAlbum() {
         // - 获取相册 / 相册数组
         let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
-
+        
         // - 获取相机胶圈这个相册
         smartAlbums.enumerateObjects { (assetCollection, index, _) in
             if assetCollection.assetCollectionSubtype == .smartAlbumUserLibrary {
@@ -112,8 +112,7 @@ extension MutiplePhotoAlbumController {
     
     // - 点击返回
     @objc func backBarItemAction() {
-        let controller = AlbumsViewController()
-        navigationController?.pushViewController(controller, animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     // - 点击取消
