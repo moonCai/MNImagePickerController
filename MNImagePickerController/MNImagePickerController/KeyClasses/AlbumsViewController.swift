@@ -17,6 +17,7 @@ class AlbumsViewController: UIViewController {
     lazy var albumsTableView: UITableView = {
         let tableView = UITableView()
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(AlbumsCell.self, forCellReuseIdentifier: AlbumsCellID)
         tableView.rowHeight = 60
         return tableView
@@ -78,8 +79,17 @@ extension AlbumsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: AlbumsCellID, for: indexPath) as! AlbumsCell
         cell.albumModel = albums[indexPath.row]
-        cell.rightArrowButton.addTarget(self, action: #selector(goDetailAlbum), for: .touchUpInside)
         return cell
+    }
+}
+
+extension AlbumsViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let controller = MutiplePhotoAlbumController()
+        // - fix: 模型类型有待修改
+//        controller.rollImageModels = albums[indexPath.row]
+        navigationController?.pushViewController(controller, animated: true)
     }
 }
 
@@ -89,12 +99,6 @@ extension AlbumsViewController {
     // - 点击取消
     @objc func dismissButtonAction() {
         dismiss(animated: true, completion: nil)
-    }
-    
-    // - 进入相册详情
-    @objc func goDetailAlbum() {
-        let controller = MutiplePhotoAlbumController()
-        navigationController?.pushViewController(controller, animated: true)
     }
     
 }
