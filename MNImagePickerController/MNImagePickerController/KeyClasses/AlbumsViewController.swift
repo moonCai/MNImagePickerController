@@ -35,6 +35,8 @@ extension AlbumsViewController {
     
     func configureUI() {
         title = "照片"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "取消", style: .plain, target: self, action: #selector(dismissButtonAction))
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
         
         view.addSubview(albumsTableView)
         albumsTableView.snp.makeConstraints {
@@ -76,6 +78,23 @@ extension AlbumsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: AlbumsCellID, for: indexPath) as! AlbumsCell
         cell.albumModel = albums[indexPath.row]
+        cell.rightArrowButton.addTarget(self, action: #selector(goDetailAlbum), for: .touchUpInside)
         return cell
     }
+}
+
+// MARK: - Event Response
+extension AlbumsViewController {
+    
+    // - 点击取消
+    @objc func dismissButtonAction() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    // - 进入相册详情
+    @objc func goDetailAlbum() {
+        let controller = MutiplePhotoAlbumController()
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
 }

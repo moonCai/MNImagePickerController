@@ -40,7 +40,6 @@ class AlbumsCell: UITableViewCell {
     lazy var rightArrowButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "rightArrow"), for: .normal)
-        button.addTarget(self, action: #selector(rightArrowButtonAction), for: .touchUpInside)
         return button
     }()
     
@@ -97,11 +96,3 @@ extension AlbumsCell {
     
 }
 
-// MARK: - Event Response
-extension AlbumsCell {
-    
-    @objc func rightArrowButtonAction() {
-        print("进入相册详情")
-    }
-    
-}
